@@ -158,6 +158,10 @@ window.addEventListener("load", function(evt) {
       if (!window.users) {
         return false;
       }
+      if (usermenu.style.display == 'block') {
+        usermenu.style.display == 'none';
+        return false;
+      }
       usermenu.innerHTML='';
       var ul = document.createElement("ul");
       window.users.forEach(function(item) {
