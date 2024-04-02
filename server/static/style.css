@@ -159,7 +159,7 @@ h1 {
   display: none;
   margin: -12px 0px;
   width: 160px;
-  background: #403515;
+  background: #35411e;
   border-radius: 10px;
   border: 1px solid #CABA7C;
 }
@@ -167,7 +167,7 @@ h1 {
 #usermenu ul li {
   padding: -4px;
   color: #ECE6BC;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 400;
   line-height: 1.4;
 }
@@ -243,7 +243,7 @@ h1 {
   display: flex;
   justify-content: space-between;
   margin: 5px 10%;
-  padding: 5px 15px;
+  padding: 5px 35px;
   background: #7CB777;
   border-radius: 12px;
   box-shadow: 1px 2px 3px #3D3A27;
@@ -251,14 +251,14 @@ h1 {
 
 .ftxt {
   display: inline-block;
-  vertical-align: middle;
+  padding-top: 8px;
 }
 .ftxt a {
-  padding-top: 4px;
   font-size: 1.3rem;
   color: #3E3A26;
   text-decoration: none;
   font-weight: 600;
+  vertical-align: middle;
 }
 
 .fbt {
@@ -286,6 +286,7 @@ h1 {
   margin: -16px 0px;
   color: maroon;
   font-size: 24px;
+  cursor: pointer;
 }
 
 #show {
