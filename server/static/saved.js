@@ -3,16 +3,19 @@ window.addEventListener("load", function(evt) {
   
   document.getElementById("chat").style.display="flex";
   
-  var user = document.getElementById("username").textContent;
-  var addr = document.getElementById("addr").textContent;
-  var clear = document.getElementById("open");
+  var user = document.getElementById("uname").textContent;
+  var addr = window.location.host;
+  var cls = document.getElementById("cls");
   var out = document.getElementById("output");
   var url = "https://" + addr + "/clear?user=" + user;
+  var uru = "https://" + addr + "/unread?user=" + user;
   
-  clear.onclick = (e) => {
+  clu.onclick = (e) => {
+    fetch(uru);
+  };
+  cls.onclick = (e) => {
     fetch(url);
     out.innerHTML = "";
   };
-  
-  
+
 });

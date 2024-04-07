@@ -2,20 +2,22 @@
 window.users = [];
   
 window.addEventListener("load", function(evt) {
+    var user = document.getElementById("username").textContent;
     var output = document.getElementById("output");
     var usermenu = document.getElementById("usermenu");
     var person = document.getElementById("person");
     var input = document.getElementById("input");
-    var user = document.getElementById("username").textContent;
     var select = document.querySelector("sel");
     var home = window.location.host;
+    var sound = new Audio('static/elegant.mp3');
     
     var ws;
-   
+    
+  
     var print = function(message) {
-      if (message.startsWith('USERS')) {
-        let us = JSON.parse(message.slice(5));
-        window.users = ["all"];
+      if (message.startsWith('USERS@')) {
+        let us = JSON.parse(message.slice(6));
+        window.users = ["+All"];
         window.users.push( ...us);
 
         return false;
@@ -34,6 +36,16 @@ window.addEventListener("load", function(evt) {
         var bx = document.createElement("div");
         bx.className = "flink";
         var lnk = "https://"+home+"/files/"+fname;
+        
+//         var mime = require('mime-types');
+//         var mt = mime.lookup("files/" + fname);
+//         if (mt) {
+//           var med = mt.split('/')[0];
+//           document.getElementById("mtype").textContent = med;
+//         } else {
+//           document.getElementById("mtype").textContent = "NO FILE FOUND";
+//         }
+//         
         var trg = "_blank";
         var a = document.createElement("a");
         a.setAttribute("href", lnk);
@@ -42,7 +54,7 @@ window.addEventListener("load", function(evt) {
         a.appendChild(fnm);
         var da = document.createElement("div");
         da.className = "ftxt";
-        da.appendChild(a)
+        da.appendChild(a);
         bx.appendChild(da);
         
         var b = document.createElement("a");
@@ -101,6 +113,8 @@ window.addEventListener("load", function(evt) {
       output.scroll(0, output.scrollHeight);
     };
 
+    document.getElementById("avatar").setAttribute("src", "static/avatars/" + user + ".jpg");
+
     document.getElementById("open").onclick = function(evt) {
         if (ws) {
             return false;
@@ -119,6 +133,7 @@ window.addEventListener("load", function(evt) {
         };
         ws.onmessage = function(evt) {
             print(evt.data);
+            sound.play();
         };
         ws.onerror = function(evt) {
             print("ERROR" + evt.data);
@@ -158,11 +173,21 @@ window.addEventListener("load", function(evt) {
       if (!window.users) {
         return false;
       }
+      if (usermenu.style.display == "block") {
+        usermenu.style.display = 'none';
+        return false;
+      }
       usermenu.innerHTML='';
       var ul = document.createElement("ul");
       window.users.forEach(function(item) {
         var li = document.createElement("li");
-        li.textContent = item;
+        var unm = item.substring(1);
+        li.textContent = unm;
+        if (item[0] == '+') {
+          li.className = "online";
+        } else {
+          li.className = "offline";
+        }
         li.addEventListener('click', (e)=>{
           let name = e.target.textContent;
           person.textContent = name;

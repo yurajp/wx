@@ -16,7 +16,7 @@
 */
 @media all and (orientation: landscape) {
   html {
-    font-size: 1.7vh;
+    font-size: 1.3vh;
     background: #2B3B3B;
   }
 }
@@ -69,12 +69,49 @@ body {
 #ctrl {
   display: flex;
   justify-content: space-evenly;
+  align-items: center;
   margin: 20px 0px;
 }
 
-#open, #close, #username, #show {
-  width: 160px;
-  padding: 6px 20px;
+#profile {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+#circle {
+  display: inline-block;
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+#avatar {
+  width: 100%;
+  object-fit: cover;
+}
+
+#username {
+  display: inline-block;
+  padding: 0px 8px;
+  font-size: 1.3rem;
+  font-family: sans;
+  font-weight: bold;
+  color: #EEE;
+}
+
+#open, #close {
+  height: 32px;
+}
+
+#open, #close, #sendname, #person, #input_file, #send {
+  cursor: pointer;
+}
+
+#open, #close, #show {
+  width: 140px;
+  padding: 4px 20px;
   font-size: 1.4rem;
   font-weight: bold;
   text-align: center;
@@ -84,14 +121,13 @@ body {
   box-shadow: inset 0px -6px 10px rgba(0,0,0,0.4);
 }
 
+
+
 #close {
   display:none;
   background: #306090;
 }
 
-#username {
-  background: #775005;
-}
 
 h1 {
   margin: 36px 0px;
@@ -156,17 +192,24 @@ h1 {
   display: none;
   margin: -12px 0px;
   width: 160px;
-  background: #403515;
+  background: #254040;
   border-radius: 10px;
   border: 1px solid #CABA7C;
 }
 
 #usermenu ul li {
   padding: -4px;
-  color: #ECE6BC;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 400;
-  line-height: 1.4;
+  line-height: 1.5;
+}
+
+.online {
+  color: #ECE6BC;
+}
+
+.offline {
+  color: #777777;
 }
 
 #board {
@@ -184,11 +227,11 @@ h1 {
 .cursiv {
   font-size: 1.2rem;
   font-style: italic;
-  padding-left: 24px;
+  padding-left: 6px;
   color: #446A44;
   font-weight: bold;
-  margin-top: -14px;
-  margin-bottom: -14px;
+  margin-top: -4px;
+  margin-bottom: -16px;
 }
 
 #output {
@@ -205,7 +248,7 @@ h1 {
 }
 
 .txt pre {
-  padding: -6px 0px;
+  padding: -4px 0px;
   font-family: sans;
   color: black;
   font-size: 1.5rem;
@@ -269,19 +312,20 @@ h1 {
 .inbox {
   display: block;
   word-wrap: break-word;
-  margin: 5%;
-  padding: 6px 5%;
+  margin: 4%;
+  padding: 6px 4%;
   background: #CAC5A0;
   border-radius: 12px;
   box-shadow: 1px 2px 3px #3D3D27;
 }
 
 .sel {
-  display: "inline-block";
-  width: 26px;
-  margin: -16px 0px;
+  display: inline-block;
+  width: 24px;
+  margin: -12px 0px;
   color: maroon;
-  font-size: 24px;
+  font-size: 22px;
+  cursor: pointer;
 }
 
 #show {
@@ -301,6 +345,17 @@ h2 {
   text-shadow: 1px 3px 2px #012;
 }
 
-#addr {
+#uname {
   display: none;
+}
+
+#cls, #clu {
+  padding: 4px 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  background: #3382A6;
+  color: #ECA;
+  border-radius: 36px;
+  box-shadow: inset 0px -6px 10px rgba(0,0,0,0.4);
 }

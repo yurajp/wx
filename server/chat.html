@@ -10,14 +10,22 @@
 <body>
  <base target="_self">
 
+ <div id="mtype"></div>
+
  <div id="ctrl">
-  <button id="username">{{ .Name }}</button>
-  <button id="open" onclick="style='display':'none'">Join</button> 
+  <div id="profile">
+    <a href='https://{{.Addr}}/saved?user={{.Name}}' target='_blank'>
+    <div id="circle">
+      <img id="avatar" src="static/avatars/Linux.jpg" target=""></div>
+      </a>
+    <div id="username">{{ .Name }}</div>
+  </div>
+  <button id="open" onclick="style='display':none">Join</button> 
   <button id="close">Exit</button>
  </div>
  
  <div id="chat">
-   <div id="person">all</div>
+   <div id="person">All</div>
    <div id="usermenu"></div>
    <div id="board"><textarea id="input" value=""></textarea></div>
    <div id="embed">
@@ -28,10 +36,6 @@
    </div>
    <button id="send">Send</button>
 
- 
-    <div id="show">
-    <a href='https://{{.Addr}}/saved?user={{.Name}}' target='_blank'>Show saved</a>
-    </div>
  
   <div id="output"></div>
  </div>
