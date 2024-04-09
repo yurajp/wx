@@ -7,6 +7,7 @@ import (
   "sync"
   "encoding/json"
   "os"
+  "strings"
   
   "github.com/gorilla/websocket"
 )
@@ -111,9 +112,20 @@ func (ms Message) StoreData() {
     return
   }
   defer f.Close()
-  f.WriteString(ms.Text + "\n")
+  
+  f.WriteString(idSaved(ms.Text))
 }
 
 func Stamp() string {
   return time.Now().Format("02 Jan 15:04")
+}
+
+
+func idSaved(htm string) string {
+  htm = strings.TrimPrefix(htm, "<div")
+  h := genHash()
+  pre := fmt.Sprintf("<!--%s--><div id=%s", h, h)
+  htm = pre + htm + "\n"
+  return strings.Replace(htm, "✫", "✘"  ,-1)
+  
 }

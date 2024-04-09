@@ -101,7 +101,7 @@ func (shm ShaMess) Add(ms Message) string {
 }
 
 func (sus Suspence) Update() {
-  js, err := json.Marshal(sus)
+  js, err := json.Marshal(suspence)
   if err != nil {
     log.Println(err)
     return
@@ -112,7 +112,6 @@ func (sus Suspence) Update() {
     log.Println(err)
     return
   }
-//  log.Println("suspence updated")
 }
 
 func (shm ShaMess) Update() {
@@ -127,7 +126,6 @@ func (shm ShaMess) Update() {
     log.Println(err)
     return
   }
-//  log.Println("hashes updated")
 }
 
 func (sus Suspence) Release(wsc Wscon, u User) {
@@ -148,7 +146,7 @@ func (sus Suspence) Release(wsc Wscon, u User) {
     }
     sus[u] = []string{}
     if i > 0 {
-      go sus.Update()
+      go suspence.Update()
     }
   }
 }
@@ -183,20 +181,24 @@ func ClearUnreaded(u User) {
       delete(shamess, sh)
     }
   }
+  n := 0
   for k, ls := range suspence {
     if k == u {
       continue
     }
-    for i := 0; i < len(ls) - 1; i++ {
+    for i := 0; i < len(ls); i++ {
       for _, s := range shas {
         if s == ls[i] {
           ls[i] = ls[len(ls)-1]
           ls = ls[:len(ls)-1]
+          n++
         }
       }
     }
     suspence[k] = ls
   }
+  
+  log.Printf("%d unreads from %v cleared", n, u)
   go shamess.Update()
   go suspence.Update()
 }

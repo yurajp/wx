@@ -7,6 +7,7 @@ import (
   "io"
   "os"
   "bytes"
+  "strings"
   "encoding/json"
   
 	"github.com/gorilla/websocket"
@@ -159,3 +160,24 @@ func unreadHandler(w http.ResponseWriter, r *http.Request) {
   models.ClearUnreaded(User(user))
 }
 
+func unsaveHandler(w http.ResponseWriter, r *http.Request) {
+  mid := r.URL.Query().Get("mid")
+  u := r.URL.Query().Get("user")
+  path := "data/" + u + ".txt"
+  bs, err := os.ReadFile(path)
+  if err != nil {
+    log.Print(err)
+    return
+  }
+  del := "<!--"
+  blx := strings.Split(string(bs), del)
+  res := []string{}
+  for _, bl := range blx {
+    if !strings.HasPrefix(bl, mid) && len(bl) > 0 {
+      res = append(res, del + bl)
+    }
+  }
+  htm := strings.Join(res, "")
+  npath := "data/" + u + ".txt"
+  os.WriteFile(npath, []byte(htm), 0640)
+}

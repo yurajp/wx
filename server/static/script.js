@@ -1,13 +1,37 @@
 
 window.users = [];
-  
+
+const types = {
+  'mp3': 'audio',
+  'wav': 'audio',
+  'ogg': 'audio',
+  'txt': 'text',
+  'pdf': 'text',
+  'docx': 'text',
+  'png': 'image',
+  'jpg': 'image',
+  'mp4': 'video',
+  'webm': 'video',
+  'mpeg': 'video',
+  'go': 'code',
+  'html': 'code',
+  'css': 'code',
+  'kt': 'code',
+  'js': 'code',
+  'py': 'code',
+  'zip': 'archive',
+  'rar': 'archive'
+};
+
+
+
 window.addEventListener("load", function(evt) {
     var user = document.getElementById("username").textContent;
     var output = document.getElementById("output");
     var usermenu = document.getElementById("usermenu");
     var person = document.getElementById("person");
     var input = document.getElementById("input");
-    var select = document.querySelector("sel");
+    var select = document.querySelectorAll("sel");
     var home = window.location.host;
     var sound = new Audio('static/elegant.mp3');
     
@@ -36,20 +60,20 @@ window.addEventListener("load", function(evt) {
         var bx = document.createElement("div");
         bx.className = "flink";
         var lnk = "https://"+home+"/files/"+fname;
-        
-//         var mime = require('mime-types');
-//         var mt = mime.lookup("files/" + fname);
-//         if (mt) {
-//           var med = mt.split('/')[0];
-//           document.getElementById("mtype").textContent = med;
-//         } else {
-//           document.getElementById("mtype").textContent = "NO FILE FOUND";
-//         }
-//         
+        var ext = fname.split('.')[1];
+        var med = types[ext];
+        if (!med) {
+          med = 'other';
+        }
+        var timg = document.createElement("img");
+        var ipath = "static/types/" + med + ".png";
+        timg.setAttribute("src", ipath);
+        timg.setAttribute("target", "");
         var trg = "_blank";
         var a = document.createElement("a");
         a.setAttribute("href", lnk);
         a.setAttribute("target", trg);
+        a.appendChild(timg);
         var fnm = document.createTextNode(fname);
         a.appendChild(fnm);
         var da = document.createElement("div");
@@ -75,6 +99,7 @@ window.addEventListener("load", function(evt) {
         
         return false;
       }
+      
       var spl = message.split("\n");
       var box = document.createElement("div");
       box.className = "inbox";
@@ -193,7 +218,6 @@ window.addEventListener("load", function(evt) {
           person.textContent = name;
           usermenu.style.display='none';
         });
-          
         ul.appendChild(li);
       });
       usermenu.appendChild(ul);
@@ -216,6 +240,7 @@ window.addEventListener("load", function(evt) {
         body: data,
       };
       fetch(url, fetchOpts);
+      
       evt.preventDefault();
       this.value="";
       return false;

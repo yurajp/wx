@@ -6,10 +6,7 @@ import (
   "crypto/tls"
   "html/template"
   "log"
-//  "bytes"
-//  "io"
   "strings"
-//  "encoding/json"
   "fmt"
   "time"
   "os"
@@ -27,7 +24,7 @@ type (
   Wait map[string]User
   
 )
-///-------
+
 type ChatRequest struct {
   Name string
   Addr string
@@ -43,7 +40,6 @@ var (
   dataCh chan Message
   pool *models.Pool
   wait Wait
-//  registry models.Registry
 )  
 
 var  upgrader = websocket.Upgrader{
@@ -82,7 +78,6 @@ var preTmpl = `<!DOCTYPE html>
   <meta charset='UTF-8'>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" type="text/css" href="static/style.css">
-  <script type="text/javascript" src="static/saved.js"></script>
 </head>
 <body>
   <div id="uname">{{ . }}</div>
@@ -95,7 +90,7 @@ var preTmpl = `<!DOCTYPE html>
     <div id='output'>
 `
 
-var postTmpl = "</div></div></body></html>"
+var postTmpl = `</div></div>  <script type="text/javascript" src="static/saved.js"></script></body></html>`
 
 func buildSavedTmpl(u string) *template.Template {
   path := fmt.Sprintf("data/%s.txt", u)
@@ -103,7 +98,8 @@ func buildSavedTmpl(u string) *template.Template {
     os.Create(path)
   }
   data, _ := os.ReadFile(path)
-  tmpl, err := template.New("").Parse(preTmpl + string(data) + postTmpl)
+  newTmpl := preTmpl + string(data) + postTmpl
+  tmpl, err := template.New("").Parse(newTmpl)
   if err != nil {
       log.Println(err)
   }
@@ -124,11 +120,9 @@ func Start() {
 	tlsConfig := &tls.Config{
 		Certificates: []tls.Certificate{serverCert},
 	}
-	
   models.LoadSha()
   models.LoadSus()
-
-	
+  
 	mux := http.NewServeMux()
 	server := http.Server{
 		Addr: addr,
@@ -147,6 +141,7 @@ func Start() {
   mux.HandleFunc("/unread", unreadHandler)
   mux.HandleFunc("/clear", clearHandler)
   mux.HandleFunc("/files", filesHandler)
+  mux.HandleFunc("/unsave", unsaveHandler)
   
   dataCh = make(chan Message, 4)
   defer close(dataCh)
