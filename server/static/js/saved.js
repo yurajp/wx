@@ -33,4 +33,19 @@ window.addEventListener("load", function(evt) {
       e.preventDefault();
     });
   }
+  
+  document.getElementById("input_img").addEventListener('change', function(evt) {
+    var avaform = document.getElementById('avaform');
+    const url = "https://" + window.location.host + "/newavatar";
+    var data = new FormData(avaform);
+    data.append("from", user);
+    const fetchOpts = {
+        method: 'POST',
+        body: data,
+    };
+    fetch(url, fetchOpts);
+    
+    return false;
+  });
+  
 });

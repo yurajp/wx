@@ -110,10 +110,9 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 func showSaved(w http.ResponseWriter, r *http.Request) {
   u := r.URL.Query().Get("user")
-  log.Printf("user %s queries saved messages", u)
   tmpl := buildSavedTmpl(u)
   
-  tmpl.Execute(w, u)
+  tmpl.Execute(w, User(u))
 }
 
 
@@ -130,7 +129,7 @@ func filesHandler(w http.ResponseWriter, r *http.Request) {
   if r.Method == http.MethodGet {
     return
   }
-  r.ParseMultipartForm(1024 * 1024 * 6)
+  r.ParseMultipartForm(1024 * 1024 * 8)
   file, header, err := r.FormFile("files")
   if err != nil {
     log.Println(err)
@@ -183,15 +182,34 @@ func unsaveHandler(w http.ResponseWriter, r *http.Request) {
   os.WriteFile(npath, []byte(htm), 0640)
 }
 
-func avatarHandler(w http.ResponseWriter, r *http.Request) {
-  user := r.URL.Query().Get("user")
-  path := "files/avatars/" + user
-  res := "files/avatars/user.png"
-  if _, err := os.Stat("server/" + path + ".jpg"); !os.IsNotExist(err) {
-    res = path + ".jpg"
-  } else if _, err := os.Stat("server" + path + ".png"); !os.IsNotExist(err) {
-    res = path + ".png"
+func editAvatar(w http.ResponseWriter, r *http.Request) {
+  if r.Method != http.MethodPost {
+    return
   }
-  log.Printf("avatar for %s: %s", user, res)
-  w.Write([]byte(res))
+  log.Print("~ avatar request")
+  r.ParseMultipartForm(1024 * 1024 * 16)
+  file, header, err := r.FormFile("newavatar")
+  if err != nil {
+    log.Println(err)
+    return
+  }
+  defer file.Close()
+  filename := header.Filename
+  ext := strings.Split(filename, ".")[1]
+  if ext != "jpg" && ext != "png" {
+    log.Printf(".%s is not supported image", ext)
+    return
+  }
+  from := r.FormValue("from")
+  newname := "server/files/avatars/" + from + "." + ext
+  var buf bytes.Buffer
+  io.Copy(&buf, file)
+  err = os.WriteFile(newname, buf.Bytes(), 0640)
+  if err != nil {
+    log.Printf("Error when update avatar: %s", err)
+    return
+  }
+  
+  
+  log.Printf("%s updates avatar", from)
 }

@@ -51,15 +51,8 @@ func NewPool() *Pool {
 }
 
 func (ch ChatRequest) Avatar() string {
-  user := ch.Name
-  path := "files/avatars/" + user
-  res := "files/avatars/user.png"
-  if _, err := os.Stat("server/" + path + ".jpg"); !os.IsNotExist(err) {
-    res = path + ".jpg"
-  } else if _, err := os.Stat("server" + path + ".png"); !os.IsNotExist(err) {
-    res = path + ".png"
-  }
-  return res
+  user := User(ch.Name)
+  return user.Avatar()
 }
 
 func (w Wait) Already(r string) bool {
@@ -147,6 +140,7 @@ func Start() {
   mux.HandleFunc("/clear", clearHandler)
   mux.HandleFunc("/files", filesHandler)
   mux.HandleFunc("/unsave", unsaveHandler)
+  mux.HandleFunc("/newavatar", editAvatar)
   
   dataCh = make(chan Message, 4)
   defer close(dataCh)

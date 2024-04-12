@@ -18,6 +18,18 @@ type Wscon struct {
   sync.Mutex
 }
 
+func (u User) Avatar() string {
+  user := string(u)
+  path := "files/avatars/" + user
+  res := "static/img/user.png"
+  if _, err := os.Stat("server/" + path + ".jpg"); !os.IsNotExist(err) {
+    res = path + ".jpg"
+  } else if _, err := os.Stat("server" + path + ".png"); !os.IsNotExist(err) {
+    res = path + ".png"
+  }
+  return res
+}
+
 
 type Pool struct {
   sync.Map

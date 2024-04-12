@@ -79,12 +79,19 @@ body {
   align-items: center;
 }
 
-#circle {
+#circle, #bigcircle {
   display: inline-block;
-  width: 48px;
-  height: 48px;
   overflow: hidden;
   border-radius: 50%;
+}
+
+#circle {
+  width: 48px;
+  height: 48px;
+}
+#bigcircle {
+  width: 96px;
+  height: 96px;
 }
 
 #avatar {
@@ -365,3 +372,13 @@ h2 {
   box-shadow: inset 0px -6px 10px rgba(0,0,0,0.4);
 }
 
+#editavatar {
+  display: flex;
+  justify-content: center;
+  align-content: flex-end;
+}
+
+#avaform label {
+  font-size: 2.0rem;
+  color: #CAC5A0;
+}

@@ -7,6 +7,18 @@
 </head>
 <body>
   <div id="uname">{{ . }}</div>
+  
+ <div id='editavatar'>
+   <div id='bigcircle'>
+     <img id="avatar" src='{{ .Avatar }}' target="avatar"></div>
+   <span>
+     <form method="post" id="avaform" enctype="multipart/form-data">
+         <input type="file" id='input_img' name='newavatar' multiple style='display:none'>
+        <label for='input_img'>&#9998;</label>
+     </form>
+   </span>
+ </div>
+ 
  <div id="ctrl">
   <button id="clu">Clear unread</button>
   <button id="cls">Clear saved</button>
