@@ -4,3 +4,4 @@ server/files/*
 server/static/avatars/*
 api.txt
 ChatWX
+config/conf.ini

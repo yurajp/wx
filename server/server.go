@@ -12,6 +12,7 @@ import (
   "os"
   "os/exec"
   
+	"github.com/yurajp/wx/config"
 	"github.com/yurajp/wx/models"
 	"github.com/gorilla/websocket"
 )
@@ -30,10 +31,8 @@ type ChatRequest struct {
 }
 
 var (
-  port = ":6555"
+  port string
   addr string
-  certKeyPath = "/data/data/com.termux/files/home/mkcerts/localhost+2-key.pem"
-  certPath = "/data/data/com.termux/files/home/mkcerts/localhost+2.pem"
   regTmpl *template.Template
   chatTmpl *template.Template
   dataCh chan Message
@@ -109,11 +108,15 @@ func buildSavedTmpl(u string) *template.Template {
 }
 
 func Start() {
+  port = config.Conf.Port
   addr = GetLocalIP() + port
   if !strings.HasPrefix(addr, "192.") {
     fmt.Println(" NO ROUTER! \n  Ctrl+C for quit!")
     return
   }
+  certKeyPath := config.Conf.CertKeyPath
+  certPath := config.Conf.CertPath
+  
 	serverCert, err := tls.LoadX509KeyPair(certPath, certKeyPath)
 	if err != nil {
 	  log.Println(err)
