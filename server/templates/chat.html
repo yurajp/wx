@@ -4,20 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ChatWS</title>
-<link rel="stylesheet" type="text/css" href="static/style.css">
-<script src="static/script.js"></script>
+<link rel="stylesheet" type="text/css" href="static/css/style.css">
+<script src="static/js/script.js"></script>
+<link rel="icon" type="image/png" href="static/favicon.png">
 </head>
 <body>
  <base target="_self">
-
- <div id="mtype"></div>
-
+ <div id="uname">{{ .Name }}</div>
  <div id="ctrl">
   <div id="profile">
     <a href='https://{{.Addr}}/saved?user={{.Name}}' target='_blank'>
     <div id="circle">
-      <img id="avatar" src="static/avatars/Linux.jpg" target=""></div>
-      </a>
+      <img id="avatar" src='{{ .Avatar }}' target="avatar"></div>
+    </a>
     <div id="username">{{ .Name }}</div>
   </div>
   <button id="open" onclick="style='display':none">Join</button> 
@@ -36,8 +35,7 @@
    </div>
    <button id="send">Send</button>
 
- 
-  <div id="output"></div>
+   <div id="output"></div>
  </div>
 </body>
 </html>

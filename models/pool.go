@@ -17,11 +17,13 @@ type Wscon struct {
   C *websocket.Conn
   sync.Mutex
 }
+
+
 type Pool struct {
   sync.Map
 }
-type Wait map[string]User
 
+type Wait map[string]User
 
 func (u User) IsValid() bool {
   if len([]rune(u)) < 4 {

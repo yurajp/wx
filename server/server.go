@@ -22,7 +22,6 @@ type (
   Message = models.Message
   User = models.User
   Wait map[string]User
-  
 )
 
 type ChatRequest struct {
@@ -52,6 +51,18 @@ func NewPool() *Pool {
   return &Pool{}
 }
 
+func (ch ChatRequest) Avatar() string {
+  user := ch.Name
+  path := "files/avatars/" + user
+  res := "files/avatars/user.png"
+  if _, err := os.Stat("server/" + path + ".jpg"); !os.IsNotExist(err) {
+    res = path + ".jpg"
+  } else if _, err := os.Stat("server" + path + ".png"); !os.IsNotExist(err) {
+    res = path + ".png"
+  }
+  return res
+}
+
 func (w Wait) Already(r string) bool {
   _, exists := w[r]
   return exists
@@ -72,33 +83,24 @@ func GetLocalIP() string {
     return localAddr.IP.String()
 }
 
-var preTmpl = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset='UTF-8'>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" href="static/style.css">
-</head>
-<body>
-  <div id="uname">{{ . }}</div>
- <div id="ctrl">
-  <button id="clu">Clear unread</button>
-  <button id="cls">Clear saved</button>
- </div>
- <div id='chat' style='display:"flex"'>
-    <h2>Saved messages</h2>
-    <div id='output'>
-`
-
-var postTmpl = `</div></div>  <script type="text/javascript" src="static/saved.js"></script></body></html>`
+var postTmpl = `</div></div>  <script type="text/javascript" src="static/js/saved.js"></script></body></html>`
 
 func buildSavedTmpl(u string) *template.Template {
   path := fmt.Sprintf("data/%s.txt", u)
   if _, err := os.Stat(path); os.IsNotExist(err) {
     os.Create(path)
   }
-  data, _ := os.ReadFile(path)
-  newTmpl := preTmpl + string(data) + postTmpl
+  data, err := os.ReadFile(path)
+  if err != nil {
+    log.Println(err)
+    return &template.Template{}
+  }
+  preTmp, err := os.ReadFile("server/templates/preTmpl.htm")
+  if err != nil {
+    log.Println(err)
+    return &template.Template{}
+  }
+  newTmpl := string(preTmp) + string(data) + postTmpl
   tmpl, err := template.New("").Parse(newTmpl)
   if err != nil {
       log.Println(err)
@@ -129,8 +131,8 @@ func Start() {
 		Handler: mux,
 		TLSConfig: tlsConfig,
 	}
-  regTmpl, _ = template.ParseFiles("server/reg.html")
-  chatTmpl, _ = template.ParseFiles("server/chat.html")
+  regTmpl, _ = template.ParseFiles("server/templates/reg.html")
+  chatTmpl, _ = template.ParseFiles("server/templates/chat.html")
   fss := http.FileServer(http.Dir("server/static"))
   mux.Handle("/static/", http.StripPrefix("/static/", fss))
   fsf := http.FileServer(http.Dir("server/files"))
@@ -156,7 +158,7 @@ func Start() {
     exec.Command("xdg-open", "https://" + addr + "/").Run()
   }()
   
-  fmt.Println(" WX server: ", addr)
+  fmt.Println("\n WXserver: ", addr)
   
   log.Fatal(server.ListenAndServeTLS("", ""))
 }

@@ -24,20 +24,18 @@ const types = {
 };
 
 
-
 window.addEventListener("load", function(evt) {
-    var user = document.getElementById("username").textContent;
+    var user = document.getElementById("uname").textContent;
+    
     var output = document.getElementById("output");
     var usermenu = document.getElementById("usermenu");
     var person = document.getElementById("person");
     var input = document.getElementById("input");
     var select = document.querySelectorAll("sel");
     var home = window.location.host;
-    var sound = new Audio('static/elegant.mp3');
-    
+    var sound = new Audio('static/snd/message.mp3');
     var ws;
     
-  
     var print = function(message) {
       if (message.startsWith('USERS@')) {
         let us = JSON.parse(message.slice(6));
@@ -87,7 +85,7 @@ window.addEventListener("load", function(evt) {
         b.setAttribute('download', "download");
         
         var bt = document.createElement("img");
-        bt.setAttribute("src", "static/download_button.png");
+        bt.setAttribute("src", "static/img/download.png");
         bt.caption = "";
         b.appendChild(bt);
         
@@ -99,7 +97,6 @@ window.addEventListener("load", function(evt) {
         
         return false;
       }
-      
       var spl = message.split("\n");
       var box = document.createElement("div");
       box.className = "inbox";
@@ -108,7 +105,6 @@ window.addEventListener("load", function(evt) {
         sel.className = "sel";
         sel.textContent = "✫";
         box.appendChild(sel);
-       
         var cur = document.createElement("span");
         cur.className = "cursiv";
         cur.textContent=spl[0];
@@ -126,36 +122,33 @@ window.addEventListener("load", function(evt) {
           sel.style.color = 'teal';
           return false;
         });
-        
         box.appendChild(txt);
       } else {
         var serv = document.createElement("p");
         serv.textContent = message;
         serv.className = "srv";
         box.appendChild(serv);
+        box.style.background = 'silver';
       }
       output.appendChild(box);
-      output.scroll(0, output.scrollHeight);
+//      output.scroll(0, output.scrollHeight);
     };
 
-    document.getElementById("avatar").setAttribute("src", "static/avatars/" + user + ".jpg");
 
     document.getElementById("open").onclick = function(evt) {
         if (ws) {
             return false;
         }
-        
         ws = new WebSocket("wss://"+window.location.host+"/translator");
         ws.onopen = function(evt) {
             print("Hi, "+user+"!");
-        document.getElementById("chat").style.display='flex';
-            
+          document.getElementById("chat").style.display='flex';
         };
         ws.onclose = function(evt) {
-            print("CLOSED");
-    
+          print("CLOSED");
           window.location.href= "https://" + home + "/";
         };
+        
         ws.onmessage = function(evt) {
             print(evt.data);
             sound.play();

@@ -100,6 +100,7 @@ func register(w http.ResponseWriter, r *http.Request) {
         wait[remote] = user
       fmt.Printf("User %s is waiting\n", string(user))
       models.Reg.NewKnown(remote, user)
+      
       chr := ChatRequest{string(user), addr}
       chatTmpl.Execute(w, chr)
       }
@@ -180,4 +181,17 @@ func unsaveHandler(w http.ResponseWriter, r *http.Request) {
   htm := strings.Join(res, "")
   npath := "data/" + u + ".txt"
   os.WriteFile(npath, []byte(htm), 0640)
+}
+
+func avatarHandler(w http.ResponseWriter, r *http.Request) {
+  user := r.URL.Query().Get("user")
+  path := "files/avatars/" + user
+  res := "files/avatars/user.png"
+  if _, err := os.Stat("server/" + path + ".jpg"); !os.IsNotExist(err) {
+    res = path + ".jpg"
+  } else if _, err := os.Stat("server" + path + ".png"); !os.IsNotExist(err) {
+    res = path + ".png"
+  }
+  log.Printf("avatar for %s: %s", user, res)
+  w.Write([]byte(res))
 }
