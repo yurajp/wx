@@ -1,0 +1,23 @@
+
+WARNING: DATA RACE
+
+  github.com/yurajp/wx/models.GetKnown()
+      /home/yura/golangs/wx/models/board.go:108 +0x1a7
+  github.com/yurajp/wx/server.register()
+      /home/yura/golangs/wx/server/handlers.go:79 +0x1ca
+  
+  github.com/yurajp/wx/models.LoadRegistry()
+      /home/yura/golangs/wx/models/board.go:97 +0x285
+  github.com/yurajp/wx/models.HandleChat()
+      /home/yura/golangs/wx/models/board.go:164 +0x3e
+  github.com/yurajp/wx/server.Start.gowrap2()
+      /home/yura/golangs/wx/server/server.go:151 +0x44
+
+==================
+
+	/home/yura/golangs/wx/models/pool.go:70 +0x1bf
+sync.(*Map).Range(0xc0000303c0, 0xc000547680)
+
+	/home/yura/golangs/wx/models/pool.go:66 +0x268
+	/home/yura/golangs/wx/server/handlers.go:30 +0x23a
+
