@@ -18,6 +18,8 @@ type Wscon struct {
 	sync.Mutex
 }
 
+type Ws = *websocket.Conn
+
 func (u User) Avatar() string {
 	user := string(u)
 	path := "files/avatars/" + user
@@ -54,13 +56,13 @@ func (p *Pool) Contains(u User) bool {
 	return ok
 }
 
-func (p *Pool) Register(ws *websocket.Conn, user User) {
-	p.Store(user, Wscon{C: ws})
+func (p *Pool) Register(ws Ws, user User) {
+	p.Store(user, ws)
 	Ach <- Attend{user, true}
 	report := fmt.Sprintf(" 😊 %s joined %s", string(user), Stamp())
 	p.Range(func(u, v any) bool {
 		if u.(User) != user {
-			wc := Wscon{C: v.(Wscon).C}
+			wc := Wscon{C: ws}
 			wc.Lock()
 			wc.C.WriteMessage(1, []byte(report))
 			wc.Unlock()
@@ -82,7 +84,7 @@ func (p *Pool) Unregister(u User) {
 	fmt.Printf(" %d users\n", p.Size())
 	report := fmt.Sprintf(" ☹️ %s leave %s", string(u), Stamp())
 	p.Range(func(k, v any) bool {
-		wc := Wscon{C: v.(Wscon).C}
+		wc := Wscon{C: v.(Ws)}
 		wc.Lock()
 		wc.C.WriteMessage(1, []byte(report))
 		wc.Unlock()
@@ -99,7 +101,7 @@ func (p *Pool) Publicate() {
 	js, _ := json.Marshal(list)
 	bmes := append([]byte("USERS"), js...)
 	p.Range(func(k, v any) bool {
-		wc := Wscon{C: v.(Wscon).C}
+		wc := Wscon{C: v.(Ws)}
 		wc.Lock()
 		wc.C.WriteMessage(1, bmes)
 		wc.Unlock()

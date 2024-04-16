@@ -145,7 +145,7 @@ func Publicate(p *Pool) {
 	}
 	bmes := append([]byte("USERS@"), js...)
 	p.Range(func(k, v any) bool {
-		wc := Wscon{C: v.(Wscon).C}
+		wc := Wscon{C: v.(Ws)}
 		wc.Lock()
 		wc.C.WriteMessage(1, bmes)
 		wc.Unlock()
@@ -159,15 +159,13 @@ func HandleChat(dCh chan Message, p *Pool) {
 	go Listen(p)
 
 	for {
-		select {
-		case ms := <-dCh:
-			if ms.To == "all" || ms.To == "All" {
-				Broadcast(ms, p)
-			} else if ms.To == "STORE" {
-				ms.StoreData()
-			} else {
-				Resend(ms, p)
-			}
+		ms := <-dCh
+		if ms.To == "all" || ms.To == "All" {
+			Broadcast(ms, p)
+		} else if ms.To == "STORE" {
+			ms.StoreData()
+		} else {
+			Resend(ms, p)
 		}
 	}
 }
@@ -185,7 +183,7 @@ func Broadcast(ms Message, p *Pool) {
 		pub = fmt.Sprintf("%s %s\n%s", string(ms.From), Stamp(), ms.Text)
 	}
 	p.Range(func(k, v interface{}) bool {
-		wc := Wscon{C: v.(Wscon).C}
+		wc := Wscon{C: v.(Ws)}
 		wc.Lock()
 		wc.C.WriteMessage(websocket.TextMessage, []byte(pub))
 		wc.Unlock()
@@ -199,7 +197,7 @@ func Resend(m Message, p *Pool) {
 	cfi, _ := p.Load(from)
 	if !p.Contains(to) {
 		m.Suspend([]User{to})
-		cfi.(Wscon).C.WriteMessage(1, []byte(fmt.Sprintf(" User %s offline now.", string(to))))
+		cfi.(Ws).WriteMessage(1, []byte(fmt.Sprintf(" User %s offline now.", string(to))))
 		return
 	}
 	ci, _ := p.Load(to)
@@ -209,9 +207,14 @@ func Resend(m Message, p *Pool) {
 	} else {
 		letter = fmt.Sprintf("%s private from %s\n%s", Stamp(), string(from), m.Text)
 	}
-	cto := Wscon{C: ci.(Wscon).C}
+	cto := Wscon{C: ci.(Ws)}
+	cto.Lock()
 	cto.C.WriteMessage(websocket.TextMessage, []byte(letter))
+	cto.Unlock()
 	if to != from {
-		cfi.(Wscon).C.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("%s message to %s delivered", Stamp(), string(to))))
+		cfr := Wscon{C: cfi.(Ws)}
+		cfr.Lock()
+		cfr.C.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("%s message to %s delivered", Stamp(), string(to))))
+		cfr.Unlock()
 	}
 }

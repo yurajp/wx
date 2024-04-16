@@ -195,7 +195,7 @@ func editAvatar(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 	filename := header.Filename
 	ext := strings.Split(filename, ".")[1]
-	if ext != "jpg" && ext != "png" {
+	if ext != "jpg" && ext != "png" && ext != "jpeg" {
 		log.Printf(".%s is not supported image", ext)
 		return
 	}

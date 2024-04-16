@@ -9,8 +9,6 @@ import (
 	"os"
 	"strings"
 	"time"
-
-	"github.com/gorilla/websocket"
 )
 
 type Suspence map[User][]string
@@ -128,7 +126,7 @@ func (shm ShaMess) Update() {
 	}
 }
 
-func (sus Suspence) Release(ws *websocket.Conn, u User) {
+func (sus Suspence) Release(ws Ws, u User) {
 	if ls, ok := sus[u]; ok {
 		i := 0
 		for _, h := range ls {
