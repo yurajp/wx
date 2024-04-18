@@ -128,7 +128,7 @@ window.addEventListener("load", function(evt) {
         serv.textContent = message;
         serv.className = "srv";
         box.appendChild(serv);
-        box.style.background = 'silver';
+        box.style.background = '#83d0db';
       }
       output.appendChild(box);
 //      output.scroll(0, output.scrollHeight);
