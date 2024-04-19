@@ -183,6 +183,9 @@ func Broadcast(ms Message, p *Pool) {
 		pub = fmt.Sprintf("%s %s\n%s", string(ms.From), Stamp(), ms.Text)
 	}
 	p.Range(func(k, v interface{}) bool {
+	  if v == nil {
+	    return false
+	  }
 		wc := Wscon{C: v.(Ws)}
 		wc.Lock()
 		wc.C.WriteMessage(websocket.TextMessage, []byte(pub))
@@ -195,12 +198,21 @@ func Resend(m Message, p *Pool) {
 	to := m.To
 	from := m.From
 	cfi, _ := p.Load(from)
+	if cfi == nil {
+	  return
+	}
 	if !p.Contains(to) {
 		m.Suspend([]User{to})
-		cfi.(Ws).WriteMessage(1, []byte(fmt.Sprintf(" User %s offline now.", string(to))))
+		cfc := Wscon{C: cfi.(Ws)}
+		cfc.Lock()
+		cfc.C.WriteMessage(1, []byte(fmt.Sprintf(" User %s offline now.", string(to))))
+		cfc.Unlock()
 		return
 	}
 	ci, _ := p.Load(to)
+	if ci == nil {
+	  return
+	}
 	var letter string
 	if strings.HasPrefix(m.Text, "FILE@") {
 		letter = m.Text

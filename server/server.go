@@ -10,7 +10,11 @@ import (
   "fmt"
   "time"
   "os"
+  "os/signal"
+  "syscall"
+  "context"
   "os/exec"
+  "errors"
   
 	"github.com/yurajp/wx/config"
 	"github.com/yurajp/wx/models"
@@ -38,6 +42,7 @@ var (
   dataCh chan Message
   pool *models.Pool
   wait Wait
+  Quit = make(chan struct{}, 1)
 )  
 
 var  upgrader = websocket.Upgrader{
@@ -157,5 +162,24 @@ func Start() {
   
   fmt.Println("\n WXserver: ", addr)
   
-  log.Fatal(server.ListenAndServeTLS("", ""))
+  go func() {
+    sigCh := make(chan os.Signal, 1)
+    signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+    <-sigCh
+    
+    qCtx, exit := context.WithTimeout(context.Background(), 2 * time.Second)
+    defer exit()
+    if err := server.Shutdown(qCtx); err != nil {
+      log.Printf("Server shutdown error: %v", err)
+      server.Close()
+    }
+    fmt.Println("\n Graceful shutdown by interrupt")
+    Quit <-struct{}{}
+  }()
+  
+  err = server.ListenAndServeTLS("", "")
+  if !errors.Is(err, http.ErrServerClosed) {
+    log.Printf("ListenAndServe: %v", err)
+    Quit <-struct{}{}
+  }
 }

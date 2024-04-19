@@ -59,6 +59,5 @@ func LoadConf() error {
   }
   Conf = &cfg
   
-  fmt.Println(" conf port ", Conf.Port)
   return nil
 }

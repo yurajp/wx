@@ -18,5 +18,8 @@ func main() {
     return 
   }
   go server.Start()
-  select{}
+  
+  select{
+    case <-server.Quit:
+  }
 }
