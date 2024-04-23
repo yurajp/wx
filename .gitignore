@@ -1,9 +1,10 @@
 wx
 wx.sh
+config/conf.ini
 data/*
 server/files/*
 server/static/avatars/*
+
 api.txt
 ChatWX
-config/conf.ini
 race.txt

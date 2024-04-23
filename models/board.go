@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 	"strings"
+	"crypto/sha256"
+	"encoding/base64"
 
 	"github.com/gorilla/websocket"
 )
@@ -55,6 +57,56 @@ func Listen(p *Pool) {
 	}
 }
 
+func HashPin(pin string) string {
+	hsh := sha256.Sum256([]byte(pin))
+	return base64.URLEncoding.EncodeToString(hsh[:])
+}
+
+func WriteAuth(am map[string]string) {
+  path := "data/auth"
+  js, err := json.Marshal(am)
+  if err != nil {
+    log.Printf("cannot make auth json: %v", err)
+    return
+  }
+  err = os.WriteFile(path, js, 0640)
+  if err != nil {
+    log.Printf("cannot write auth file: %v", err )
+  }
+}
+
+func LoadAuth() map[string]string {
+  am := make(map[string]string)
+  path := "data/auth"
+  bs, err := os.ReadFile(path)
+  if err != nil {
+    log.Printf("cannot read auth file: %v", err)
+    return am
+  }
+  if len(bs) == 0 {
+    return am
+  }
+  err = json.Unmarshal(bs, &am)
+  if err != nil {
+    log.Printf("cannot unmarshal auth")
+  }
+  return am
+}
+
+func GetHPin(u User) string {
+  am := LoadAuth()
+  if hp, ok := am[string(u)]; ok {
+    return hp
+  }
+  return ""
+}
+
+func UpdateAuth(u, hpin string) {
+  am := LoadAuth() 
+  am[u] = hpin
+  WriteAuth(am)
+}
+
 func (rg Registry) WriteFile() error {
 	path := "data/registry"
 	js, err := json.Marshal(rg)
@@ -72,8 +124,10 @@ func (rg Registry) NewKnown(addr string, u User) {
 	if _, ok := rg[addr]; !ok {
 		Reg[addr] = u
 	}
-	go Reg.WriteFile()
-
+	err := Reg.WriteFile()
+	if err != nil {
+	  log.Printf("cannot write registry: %v", err)
+	}
 }
 
 func LoadRegistry() {
@@ -109,6 +163,15 @@ func (b Board) Print() {
 	for _, atd := range b {
 		fmt.Println(atd.String())
 	}
+}
+
+func IsRegistered(user User) bool {
+  for _, u := range Reg {
+		if u == user {
+		  return true
+		}
+	}
+	return false
 }
 
 func RegUsers() []User {

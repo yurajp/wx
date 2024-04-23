@@ -37,6 +37,9 @@ window.addEventListener("load", function(evt) {
     var ws;
     
     var print = function(message) {
+      if (!ws) {
+        return false;
+      }
       if (message.startsWith('USERS@')) {
         let us = JSON.parse(message.slice(6));
         window.users = ["+All"];
@@ -141,7 +144,7 @@ window.addEventListener("load", function(evt) {
         }
         ws = new WebSocket("wss://"+window.location.host+"/translator");
         ws.onopen = function(evt) {
-            print("Hi, "+user+"!");
+      //      print("Welcome "+user+"!");
           document.getElementById("chat").style.display='flex';
         };
         ws.onclose = function(evt) {

@@ -5,19 +5,26 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/yurajp/wx/models"
 )
 
+type AuthCase struct {
+  Name User
+  Case string
+}
+
 func translator(w http.ResponseWriter, r *http.Request) {
 	user := wait[host(r)]
 	if pool.Contains(user) {
-		log.Printf("User %s already in pool", string(user))
+		log.Printf("User %s already in chat", string(user))
 		return
 	}
 	c, err := upgrader.Upgrade(w, r, nil)
@@ -25,11 +32,12 @@ func translator(w http.ResponseWriter, r *http.Request) {
 		log.Println("upgrader:", err)
 		return
 	}
+	c.SetReadDeadline(time.Now().Add(500 * time.Minute))
 	defer c.Close()
 
 	pool.Register(c, user)
 	delete(wait, host(r))
-	log.Printf("New user: %s (%s) common %d", string(user), host(r), pool.Size())
+	log.Printf("New member: %s (%s), common %d", string(user), host(r), pool.Size())
 
 	for {
 		mtype, message, err := c.ReadMessage()
@@ -72,12 +80,45 @@ func translator(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func isKnownAndFree(remote string) (User, bool) {
+  u, ok := models.GetKnown(remote)
+  if !ok {
+    return User(""), false
+  }
+  if wait.Already(remote) {
+    return u, false
+  }
+  if pool.Contains(u) {
+    return u, false
+  }
+  return u, true
+}
+
+func isKnownNewOrOther(remote, name string) (User, int) {
+  u, ad := models.GetKnown(remote)
+  reg := name != "" && models.IsRegistered(User(name))
+  other := (u != User(name))
+  switch {
+		case ad && (name == "" || !other):
+      return u, 0
+		case ad && reg && other:
+		  return User(name), 1
+		case !ad && reg:
+		  return User(name), 2
+		case !ad && !reg:
+		  return User(name), 3
+		}
+		return User(""), -1
+}
+
+
 func register(w http.ResponseWriter, r *http.Request) {
 	remote := host(r)
-	placeholder := "Your name"
+
 	if r.Method == http.MethodGet {
-		if u, ok := models.GetKnown(remote); ok && !wait.Already(remote) && !pool.Contains(u) {
-			placeholder = string(u)
+	  placeholder := "Your name"
+		if us, ok := isKnownAndFree(remote); ok {
+			placeholder = string(us)
 		}
 		regTmpl.Execute(w, placeholder)
 	}
@@ -87,25 +128,113 @@ func register(w http.ResponseWriter, r *http.Request) {
 			log.Printf("parse form: %s", err)
 		}
 		name := r.FormValue("name")
-
-		u, ok := models.GetKnown(remote)
-		if ok && name == "" {
-			wait[remote] = u
-			fmt.Printf("~ User %s is waiting\n", string(u))
-			chr := ChatRequest{string(u), addr}
-			chatTmpl.Execute(w, chr)
-		} else {
-			user := User(name)
-			if user.IsValid() {
-				wait[remote] = user
-				fmt.Printf("User %s is waiting\n", string(user))
-				models.Reg.NewKnown(remote, user)
-
-				chr := ChatRequest{string(user), addr}
-				chatTmpl.Execute(w, chr)
-			}
-		}
+    user, nCase := isKnownNewOrOther(remote, name)
+    
+    switch (nCase) {
+    case -1:
+      http.Error(w, "not valid name", http.StatusBadRequest)
+    case 0:
+      if models.GetHPin(user) == "" {
+        ac := AuthCase{user, "0"}
+        authTmpl.Execute(w, ac)
+      } else {
+			  wait[remote] = user
+			  chr := ChatRequest{string(user), addr}
+			  chatTmpl.Execute(w, chr)
+      }
+		case 1:
+		  ac := AuthCase{User(name), "1"}
+		  authTmpl.Execute(w, ac)
+		case 2:
+		  ac := AuthCase{User(name), "2"}
+		  authTmpl.Execute(w, ac)
+		case 3:
+		  if User(name).IsValid() {
+		    ac := AuthCase{User(name), "3"}
+		    authTmpl.Execute(w, ac)
+		  } else {
+		    http.Error(w, "not valid name", http.StatusBadRequest)
+		  }
+    }
 	}
+}
+
+func authHandler(w http.ResponseWriter, r *http.Request) {
+  if r.Method != http.MethodPost {
+    w.WriteHeader(405)
+    http.Error(w, "NotAllowed", 405)
+    return
+  }
+  data, err := ioutil.ReadAll(r.Body)
+  if err != nil {
+    log.Printf("read post: %v", err)
+  }
+  defer r.Body.Close()
+  
+  type Post struct {
+    Pin string `json:"pin"`
+    Name string `json:"name"`
+    Case string `json:"cas"`
+  }
+  
+  var post Post
+  err = json.Unmarshal(data, &post)
+  if err != nil {
+    log.Printf("unmarshal data: %v", err)
+  }
+  
+  hpin := models.HashPin(post.Pin)
+  name := post.Name
+  acase := post.Case
+  
+  success := []byte(`{"message":"success"}`)
+  wrongpin := []byte(`{"message":"wrong pin"}`)
+  
+  switch (acase) {
+  case "0":
+    go models.UpdateAuth(name, hpin)
+  case "1":
+    if hpin != models.GetHPin(User(name)) {
+		  w.WriteHeader(http.StatusUnauthorized)
+		  w.Write(wrongpin)
+      return
+    }
+ 
+  case "2":
+    spin := models.GetHPin(User(name))
+    if spin != hpin {
+		  w.WriteHeader(http.StatusUnauthorized)
+		  w.Write(wrongpin)
+      return
+    }
+    go models.Reg.NewKnown(host(r), User(name))
+  case "3":
+    if !User(name).IsValid() {
+		  w.WriteHeader(http.StatusUnauthorized)
+		  w.Write([]byte(`{"message":"not valid name"}`))
+		  return
+    } 
+    go models.UpdateAuth(name, hpin)
+    go models.Reg.NewKnown(host(r), User(name))
+  }
+  
+  log.Printf("auth case %s handled", acase)
+  
+  w.Header().Set("Content-Type", "application/json")
+  w.Write(success)
+  
+//   chr := ChatRequest{name, addr}
+//   time.Sleep(2 * time.Second)
+// 	chatTmpl.Execute(w, chr)
+
+}
+
+func cont(w http.ResponseWriter, r *http.Request) {
+  us := r.URL.Query().Get("user")
+  wait[host(r)] = User(us)
+  chr := ChatRequest{us, addr}
+  
+  chatTmpl.Execute(w, chr)
 }
 
 func showSaved(w http.ResponseWriter, r *http.Request) {

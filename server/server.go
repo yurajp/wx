@@ -39,6 +39,7 @@ var (
   addr string
   regTmpl *template.Template
   chatTmpl *template.Template
+  authTmpl *template.Template
   dataCh chan Message
   pool *models.Pool
   wait Wait
@@ -133,12 +134,18 @@ func Start() {
 		TLSConfig: tlsConfig,
 	}
   regTmpl, _ = template.ParseFiles("server/templates/reg.html")
+  authTmpl, err = template.ParseFiles("server/templates/auth.html")
+  if err != nil {
+    log.Printf("parse template: %v", err)
+  }
   chatTmpl, _ = template.ParseFiles("server/templates/chat.html")
   fss := http.FileServer(http.Dir("server/static"))
   mux.Handle("/static/", http.StripPrefix("/static/", fss))
   fsf := http.FileServer(http.Dir("server/files"))
   mux.Handle("/files/", http.StripPrefix("/files/", fsf))
   mux.HandleFunc("/", register)
+  mux.HandleFunc("/auth", authHandler)
+  mux.HandleFunc("/cont", cont)
   mux.HandleFunc("/translator", translator)
   mux.HandleFunc("/saved", showSaved)
   mux.HandleFunc("/unread", unreadHandler)
