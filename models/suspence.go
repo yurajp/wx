@@ -186,19 +186,21 @@ func ClearUnreaded(u User) {
 		if k == u {
 			continue
 		}
-		for i := 0; i < len(ls); i++ {
-			for _, s := range shas {
+		lnls := len(ls)
+    for _, s := range shas {
+		  for i := 0; i < lnls; i++ {
 				if s == ls[i] {
-					ls[i] = ls[len(ls)-1]
-					ls = ls[:len(ls)-1]
+				  lnls--
+					ls[i] = ls[lnls]
 					n++
 				}
 			}
+			ls = ls[:lnls]
 		}
 		suspence[k] = ls
 	}
 
-	log.Printf("%d unreads from %v cleared", n, u)
+	log.Printf("%d unreads of %v cleared", n, u)
 	go shamess.Update()
 	go suspence.Update()
 }

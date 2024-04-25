@@ -111,6 +111,10 @@ window.addEventListener("load", function(evt) {
         var cur = document.createElement("span");
         cur.className = "cursiv";
         cur.textContent=spl[0];
+        let from = spl[0].trim().split(" ")[0];
+        if (from == user) {
+          box.style.background='#A0CABE';
+        }
         box.appendChild(cur);
         var txt = document.createElement("div");
         txt.className = "txt";

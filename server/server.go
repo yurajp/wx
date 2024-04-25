@@ -167,7 +167,7 @@ func Start() {
     exec.Command("xdg-open", "https://" + addr + "/").Run()
   }()
   
-  fmt.Println("\n WXserver: ", addr)
+  fmt.Println("\n WXserver: \n", addr)
   
   go func() {
     sigCh := make(chan os.Signal, 1)
@@ -180,7 +180,8 @@ func Start() {
       log.Printf("Server shutdown error: %v", err)
       server.Close()
     }
-    fmt.Println("\n Graceful shutdown by interrupt")
+    fmt.Println("\n Graceful shutdown by interrupt\n")
+    
     Quit <-struct{}{}
   }()
   
