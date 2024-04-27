@@ -35,7 +35,7 @@ func translator(w http.ResponseWriter, r *http.Request) {
 	c.SetReadDeadline(time.Now().Add(500 * time.Minute))
 	defer c.Close()
 
-	pool.Register(c, user)
+	pool.Register(c, user, dataCh)
 	delete(wait, host(r))
 	log.Printf("New member: %s (%s), common %d", string(user), host(r), pool.Size())
 
@@ -44,19 +44,19 @@ func translator(w http.ResponseWriter, r *http.Request) {
 		if err != nil && err != io.EOF {
 			log.Println(err)
 
-			pool.Unregister(user)
-			models.Publicate(pool)
+			pool.Unregister(user, dataCh)
+			pool.Publicate(dataCh)
 			break
 		}
 		switch mtype {
 		case 8:
-			pool.Unregister(user)
-			models.Publicate(pool)
+			pool.Unregister(user, dataCh)
+			pool.Publicate(dataCh)
 			log.Println(message)
 			return
 		case websocket.TextMessage:
 			if string(message) == "CLOSED" {
-				pool.Unregister(user)
+				pool.Unregister(user, dataCh)
 				return
 			}
 			var ms Message
@@ -337,6 +337,5 @@ func editAvatar(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Error when update avatar: %s", err)
 		return
 	}
-
 	log.Printf("%s updates avatar", from)
 }

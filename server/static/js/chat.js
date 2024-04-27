@@ -36,28 +36,30 @@ window.addEventListener("load", function(evt) {
     var sound = new Audio('static/snd/message.mp3');
     var ws;
     
-    var print = function(message) {
+    var handleMessage = function(message) {
       if (!ws) {
         return false;
       }
-      if (message.startsWith('USERS@')) {
-        let us = JSON.parse(message.slice(6));
-        window.users = ["+All"];
-        window.users.push( ...us);
-
-        return false;
-      }
+      
       if (message == 'CLOSED') {
         ws = null;
         return false;
       }
+      
       if (message.startsWith('ERROR')) {
         ws.write(message);
         return false;
       }
+      
+      if (message.startsWith('USERS@')) {
+        let us = JSON.parse(message.slice(6));
+        window.users = ["+All"];
+        window.users.push( ...us);
+        return false;
+      }
+      
       if (message.startsWith("FILE@")) {
         let fname = message.replace("FILE@", "");
-        
         var bx = document.createElement("div");
         bx.className = "flink";
         var lnk = "https://"+home+"/files/"+fname;
@@ -113,7 +115,7 @@ window.addEventListener("load", function(evt) {
         cur.textContent=spl[0];
         let from = spl[0].trim().split(" ")[0];
         if (from == user) {
-          box.style.background='#A0CABE';
+          box.style.background='92D5A01';
         }
         box.appendChild(cur);
         var txt = document.createElement("div");
@@ -135,10 +137,10 @@ window.addEventListener("load", function(evt) {
         serv.textContent = message;
         serv.className = "srv";
         box.appendChild(serv);
-        box.style.background = '#83d0db';
+        box.style.background = '#A2C9D6';
       }
       output.appendChild(box);
-//      output.scroll(0, output.scrollHeight);
+      output.scroll(0, output.scrollHeight);
     };
 
 
@@ -152,16 +154,16 @@ window.addEventListener("load", function(evt) {
           document.getElementById("chat").style.display='flex';
         };
         ws.onclose = function(evt) {
-          print("CLOSED");
-          window.location.href= "https://" + home + "/";
+          handleMessage("CLOSED");
+          window.location.href= "https://" + home + "scc/";
         };
         
         ws.onmessage = function(evt) {
-            print(evt.data);
+            handleMessage(evt.data);
             sound.play();
         };
         ws.onerror = function(evt) {
-            print("ERROR" + evt.data);
+            handleMessageq("ERROR" + evt.data);
         };
         document.getElementById('open').style.display='none';
         document.getElementById('close').style.display='inline-block';

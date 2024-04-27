@@ -56,57 +56,41 @@ func (p *Pool) Contains(u User) bool {
 	return ok
 }
 
-func (p *Pool) Register(ws Ws, user User) {
+func (p *Pool) Register(ws Ws, user User, ch chan Message) {
 	p.Store(user, ws)
 	Ach <- Attend{user, true}
 	report := fmt.Sprintf(" 😊 %s joined %s", string(user), Stamp())
-	p.Range(func(u, v any) bool {
-		if u.(User) != user {
-			wc := Wscon{C: ws}
-			wc.Lock()
-			wc.C.WriteMessage(1, []byte(report))
-			wc.Unlock()
-		}
-		return true
-
-	})
-
-	go func() {
-		suspence.Release(ws, user)
-		shamess.Check(suspence)
-	}()
+	ms := Message{From: User("Server"), To: User("All"), Text: report}
+	ch <- ms
+	
+	go suspence.Release(user, ch)
+	go shamess.Check(suspence)
 }
 
-func (p *Pool) Unregister(u User) {
+func (p *Pool) Unregister(u User, ch chan Message) {
 	p.Delete(u)
 	Ach <- Attend{u, false}
 	log.Printf("User %s deleted", string(u))
 	fmt.Printf(" %d users\n", p.Size())
 	report := fmt.Sprintf(" ☹️ %s leave %s", string(u), Stamp())
-	p.Range(func(k, v any) bool {
-		wc := Wscon{C: v.(Ws)}
-		wc.Lock()
-		wc.C.WriteMessage(1, []byte(report))
-		wc.Unlock()
-		return true
-	})
+	ms := Message{From: User("Server"), To: User("All"), Text: report}
+	ch <-ms
 }
 
-func (p *Pool) Publicate() {
+func (p *Pool) Publicate(ch chan Message) {
 	list := []string{}
-	p.Range(func(u, v interface{}) bool {
-		list = append(list, string(u.(User)))
-		return true
-	})
-	js, _ := json.Marshal(list)
-	bmes := append([]byte("USERS"), js...)
-	p.Range(func(k, v any) bool {
-		wc := Wscon{C: v.(Ws)}
-		wc.Lock()
-		wc.C.WriteMessage(1, bmes)
-		wc.Unlock()
-		return true
-	})
+	for _, atd := range B {
+		list = append(list, atd.String())
+	}
+	js, err := json.Marshal(list)
+	if err != nil {
+		log.Printf("publicate: json: %s", err)
+		return
+	}
+	bmes := append([]byte("USERS@"), js...)
+	  
+	ms := Message{From: User("Server"), To: User("All"), Text: string(bmes)}
+	ch <-ms
 }
 
 type Message struct {
@@ -128,7 +112,7 @@ func (ms Message) StoreData() {
 }
 
 func Stamp() string {
-	return time.Now().Format("02 Jan 15:04")
+	return time.Now().Format("02-01 15:04")
 }
 
 func idSaved(htm string) string {

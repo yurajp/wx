@@ -154,7 +154,7 @@ func Start() {
   mux.HandleFunc("/unsave", unsaveHandler)
   mux.HandleFunc("/newavatar", editAvatar)
   
-  dataCh = make(chan Message, 4)
+  dataCh = make(chan Message, 1)
   defer close(dataCh)
   
   wait = Wait{}

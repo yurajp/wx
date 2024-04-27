@@ -43,7 +43,7 @@ func Remove(u User) {
 	}
 }
 
-func Listen(p *Pool) {
+func (p *Pool) Listen(ch chan Message) {
 	for {
 		a := <-Ach
 		u := a.User
@@ -53,7 +53,7 @@ func Listen(p *Pool) {
 				break
 			}
 		}
-		Publicate(p)
+		p.Publicate(ch)
 	}
 }
 
@@ -196,30 +196,11 @@ func ListOff() []User {
 	return offus
 }
 
-func Publicate(p *Pool) {
-	list := []string{}
-	for _, atd := range B {
-		list = append(list, atd.String())
-	}
-	js, err := json.Marshal(list)
-	if err != nil {
-		log.Printf("publicate: json: %s", err)
-		return
-	}
-	bmes := append([]byte("USERS@"), js...)
-	p.Range(func(k, v any) bool {
-		wc := Wscon{C: v.(Ws)}
-		wc.Lock()
-		wc.C.WriteMessage(1, bmes)
-		wc.Unlock()
-		return true
-	})
-}
 
 func HandleChat(dCh chan Message, p *Pool) {
 
 	LoadRegistry()
-	go Listen(p)
+	go p.Listen(dCh)
 
 	for {
 		ms := <-dCh
@@ -236,11 +217,11 @@ func HandleChat(dCh chan Message, p *Pool) {
 func Broadcast(ms Message, p *Pool) {
 	offs := ListOff()
 
-	if len(offs) > 0 {
+	if len(offs) > 0 && ms.From != "Server" {
 		ms.Suspend(offs)
 	}
 	var pub string
-	if strings.HasPrefix(ms.Text, "FILE@") {
+	if strings.HasPrefix(ms.Text, "FILE@") || ms.From == User("Server") {
 		pub = ms.Text
 	} else {
 		pub = fmt.Sprintf("%s %s\n%s", string(ms.From), Stamp(), ms.Text)
@@ -264,12 +245,8 @@ func Resend(m Message, p *Pool) {
 	if cfi == nil {
 	  return
 	}
-	if !p.Contains(to) {
+	if !p.Contains(to) && m.From != "Server" {
 		m.Suspend([]User{to})
-		cfc := Wscon{C: cfi.(Ws)}
-		cfc.Lock()
-		cfc.C.WriteMessage(1, []byte(fmt.Sprintf(" User %s offline now.", string(to))))
-		cfc.Unlock()
 		return
 	}
 	ci, _ := p.Load(to)

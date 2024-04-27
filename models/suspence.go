@@ -1,14 +1,14 @@
 package models
 
 import (
-	"crypto/sha1"
-	"encoding/base64"
-	"encoding/json"
-	"fmt"
-	"log"
-	"os"
-	"strings"
-	"time"
+  	"crypto/sha1"
+  	"encoding/base64"
+  	"encoding/json"
+  	"fmt"
+  	"log"
+  	"os"
+//	"strings"
+  	"time"
 )
 
 type Suspence map[User][]string
@@ -126,26 +126,16 @@ func (shm ShaMess) Update() {
 	}
 }
 
-func (sus Suspence) Release(ws Ws, u User) {
+func (sus Suspence) Release(u User, ch chan Message) {
 	if ls, ok := sus[u]; ok {
-		i := 0
 		for _, h := range ls {
 			dm := shamess[h]
-			var mes string
-			if strings.HasPrefix(dm.Message.Text, "FILE@") {
-				mes = dm.Message.Text
-			} else {
-				mes = fmt.Sprintf(" %s %s\n%s", string(dm.Message.From), dm.Date, dm.Message.Text)
-			}
-			wsc := Wscon{C: ws}
-
-			wsc.Lock()
-			wsc.C.WriteMessage(1, []byte(mes))
-			wsc.Unlock()
-			i++
+			txt := fmt.Sprintf(" %s\n%s", dm.Date, dm.Text)
+			ms := Message{From: dm.From, To: u, Text: txt}
+			ch <-ms
 		}
 		sus[u] = []string{}
-		if i > 0 {
+		if len(ls) > 0 {
 			go suspence.Update()
 		}
 	}
