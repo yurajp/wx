@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WXChat</title>
+<link rel="stylesheet" type="text/css" href="static/css/style.css">
+<script src="static/js/chat.js"></script>
+<link rel="icon" type="image/png" href="static/favicon.png">
+</head>
+<body>
+ <base target="_self">
+ <div id="uname">{{ . }}</div>
+ 
+ <div id="ctrl">
+  <div id="profile">
+    
+    <div id="circle">
+      <img id="avatar" src='{{ .Avatar }}' target="avatar">
+    </div>
+    <span>
+      <form method="post" id="avaform" enctype="multipart/form-data">
+        <input type="file" id='input_img' name='newavatar' multiple style='display:none'>
+        <label for='input_img'>&#128394;</label>
+      </form>
+    </span>
+    
+    <div id="username">{{ . }}</div>
+    
+  </div>
+  <button id="open" onclick="style='display':none">Join</button> 
+  <button id="close">Exit</button>
+ </div>
+ 
+ <div id="chat">
+   <div id="person">All</div>
+   <div id="usermenu"></div>
+   <div id="board"><textarea id="input" value=""></textarea>
+     <div id="record">
+       <img src="static/img/mic.png">
+     </div>
+   </div>
+   
+   <button id="send">Send</button>
+   
+   <div id="embed">
+     <form id="content" method="post" enctype="multipart/form-data">
+     <input type="file" id="input_file" name="files" style="display:none">
+     <label for="input_file"><img src="static/img/vector-up.png" width=24px></label>
+     </form>
+   </div>
+
+   <div id="output">
+     <button id="clear">
+       Clear chat
+     </button>
+   </div>
+ </div>
+</body>
+</html>

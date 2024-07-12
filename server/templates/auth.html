@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="static/css/style.css">
+<link rel="icon" type="image/png" href="static/favicon.png">
+</head>
+<body>
+  <div id="acase" style="display:none">
+    {{ .Case }}</div>
+  <div id="username" style="display:none">
+    {{ .User }}</div>
+    
+  <div id="authblock">
+    <h2>ChatWX</h2>
+    <div id="case">
+      {{ if eq .Case 2 }}
+        The name <b>{{ .User }}</b> is registered on other address. <br>
+        Enter your pin to login from this device
+        <br> or go back and choose other name to register.
+      {{ end }}
+      {{ if eq .Case 3 }}
+        This address's using by other person.<br>
+        Enter your pin to enter.
+      {{ end }}
+      {{ if eq .Case 0 }}
+        <p>Hello, {{ .User }}</p>
+        <p>Type and remember a pin (4 or more symbols).</p>
+        {{ end }}
+    </div>
+    <form id="authform" method='POST'>
+      <div id="form1">
+        <div id="namein">
+         <input id="pin" type="password" name="pin" value="">
+        </div>
+        <div id="butin">
+        <button id="sendpin" type="button">Send</button>
+        </div>
+      </div>
+    </form>
+  </div>
+ 
+  <div id="cont" style="display:none">
+    <div id="authresp"></div>
+    <button id="btcont">continue</button>
+  </div>
+  
+  <script type="text/javascript">
+ window.addEventListener("load", function(e) {
+    var name = document.getElementById("username").textContent;
+    var cas = document.getElementById('acase').textContent;
+    var form = document.getElementById("authform");
+    var pin = document.getElementById('pin');
+    var cont = document.getElementById("cont");
+    var resp = document.getElementById("authresp");
+    var btn = document.getElementById("sendpin");
+    var blk = document.getElementById("authblock");
+    
+    btn.addEventListener('click', function(evt) {
+      var data = {pin: pin.value, name: name.trim(), cas: cas.trim()};
+      var js = JSON.stringify(data);
+      const url = "https://"+window.location.host+"/auth";
+      
+      fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: js,
+      })
+      .then(function(res) {
+//        if (!res.ok) {
+//          throw new Error("BAD RESPONSE");
+//        }
+         return res.json();
+        })
+      .then(function(jsn) {
+        return jsn.message
+      })
+      .then(function(mes) {
+        blk.style.display='none';
+        cont.style.display='flex';
+        var ymes = document.createElement("p");
+        ymes.textContent = mes;
+        resp.appendChild(ymes);
+        var ynm = document.createElement("p");
+        ynm.textContent="Your login: " + name.trim();
+        resp.appendChild(ynm);
+        var ypn = document.createElement("p");
+        ypn.textContent = "Your pin: " + pin.value.trim();
+        resp.appendChild(ypn);
+      })
+      .catch((error) => {
+        cont.style.display='block';
+        resp.textContent = error;
+      });
+      document.getElementById("btcont").addEventListener('click', (e) => {
+        const url = "https://"+window.location.host+"/cont?user="+name.trim();
+        window.location.replace(url);
+      });
+    });
+ });   
+  </script>
+</body>
+</html>

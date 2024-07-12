@@ -1,0 +1,8 @@
+wx
+config/conf.ini
+data/*
+server/files/*
+server/static/avatars/*
+
+player-css.txt
+

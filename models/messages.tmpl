@@ -1,0 +1,60 @@
+{{ define "server" }}
+  <div class="server">
+   <span class="cursiv">
+    {{ .Time.Time }}
+   </span>
+   <p class="srv">{{ .Data }}</p>
+  </div>
+{{ end }}
+
+{{ define "header" }}
+  <div class="header">
+    <span class="cursiv">{{ .From }} {{ .Time.Time }}
+    </span>
+      {{ if .IsPrivate }}
+    <span class="private">PRIVATE</span>
+      {{ end }}
+    <div class="trash" onclick="deleteMessage({{ .Sid }})"> 🗑 </div>
+  </div>
+{{ end }}
+
+{{ define "text" }}
+  <div class="inbox" id="{{ .Sid }}">
+    {{ template "header" . }}
+    <div class="txt">
+      <pre>{{ .Data }}</pre>
+    </div>
+  </div>
+{{ end }}
+
+{{ define "file" }}
+  <div class="inbox" id="{{ .Sid }}">
+  {{ template "header" . }}
+   <div class="flink">
+    <div class="ftxt">
+     <a href="{{ .FileAddr }}" target="_blank">
+      <img src="{{ .FileImage }}"/>
+      {{ .Data }}
+     </a>
+    </div>
+    <div class="fbt">
+     <a href="{{ .FileAddr }}" target="_blank" download="download">
+      <img src="static/img/download.png"/>
+     </a>
+    </div>
+   </div>
+  </div>
+{{ end }}
+
+{{ define "error" }}
+  <div class="error">
+    <p>{{ .data }}</p>
+  </div>
+{{ end }}
+
+{{ define "voice" }}
+  <div class="inbox" id="{{ .Sid }}">
+  {{ template "header" . }}
+  <audio controls src={{ .VoiceAddr }}></audio>
+  </div>
+{{ end }}
