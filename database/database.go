@@ -27,6 +27,7 @@ type Message struct {
   To User `json:"to"`
   Type string `json:"type"`
   Data string `json:"data"`
+  Quote string `json:"quote"`
 }
 
 type DateTime struct {
@@ -145,16 +146,7 @@ func SetStorage() error {
 
 // returns isFrom, isFile, filename
 func (s Storage) IsFromOrToAndFile(sid, u string) (bool, bool, bool, string) {
-  query := "select sid, message from blobs where sid = ?"
-  row := s.Db.QueryRow(query, sid)
-  var dr DbMessage
-  err := row.Scan(&dr.Sid, &dr.Blob)
-  if err != nil {
-    log.Print(err)
-    return false, false, false, ""
-  }
-  var m Message
-  err = json.Unmarshal(dr.Blob, &m)
+  m, err := s.GetMessage(sid)
   if err != nil {
     log.Print(err)
     return false, false, false, ""
@@ -201,4 +193,20 @@ func (s Storage) RemoveVoice(v string) error {
     }
   }
   return os.Remove(path)
+}
+
+func (s Storage) GetMessage(sid string) (Message, error) {
+  query := "select sid, message from blobs where sid = ?"
+  row := s.Db.QueryRow(query, sid)
+  var dr DbMessage
+  err := row.Scan(&dr.Sid, &dr.Blob)
+  if err != nil {
+    return Message{}, err
+  }
+  var m Message
+  err = json.Unmarshal(dr.Blob, &m)
+  if err != nil {
+    return Message{}, err
+  }
+  return m, nil
 }

@@ -9,11 +9,12 @@
 
 {{ define "header" }}
   <div class="header">
-    <span class="cursiv">{{ .From }} {{ .Time.Time }}
-    </span>
+    <div class="cursiv">{{ .From }} {{ .Time.Time }}
+    </div>
       {{ if .IsPrivate }}
     <span class="private">PRIVATE</span>
       {{ end }}
+    <div class="share" onclick="toQuote({{ .Sid }})"> ➥ </div>
     <div class="trash" onclick="deleteMessage({{ .Sid }})"> 🗑 </div>
   </div>
 {{ end }}
@@ -21,6 +22,9 @@
 {{ define "text" }}
   <div class="inbox" id="{{ .Sid }}">
     {{ template "header" . }}
+    {{ if .HasQuote }}
+    {{ template "quoted" . }}
+    {{ end }}
     <div class="txt">
       <pre>{{ .Data }}</pre>
     </div>
@@ -56,5 +60,18 @@
   <div class="inbox" id="{{ .Sid }}">
   {{ template "header" . }}
   <audio controls src={{ .VoiceAddr }}></audio>
+  </div>
+{{ end }}
+
+{{ define "quoted" }}
+  <div class="quoted">
+    <div class="strip"> </div>
+    <div class="qbox">
+      <div class="qfrom">{{ index .Quoted 0 }}
+      </div>
+      
+      <pre>{{ index .Quoted 1 }}
+      </pre>
+    </div>
   </div>
 {{ end }}

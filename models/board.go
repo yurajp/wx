@@ -316,6 +316,9 @@ func (b *Board) ListenChat(dataCh chan *Message) {
     } else {
       b.BroadcastMessage(ms)
     }
+    if ms.HasQuote() {
+      fmt.Print("-Q-")
+    }
   }
 }
 
@@ -330,3 +333,4 @@ func (u User) Avatar() string {
 	}
 	return res
 }
+

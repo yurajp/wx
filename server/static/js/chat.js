@@ -12,6 +12,14 @@
     });
   }
 
+var quote = "";
+
+function toQuote(e) {
+    quote = e;
+    this.style.background = orange;
+      
+    return false;
+}
 
 window.addEventListener("load", function(evt) {
     var user = document.getElementById("uname").textContent;
@@ -28,7 +36,7 @@ window.addEventListener("load", function(evt) {
 	    day: 'numeric', month: 'long'
     };
     var record = document.getElementById("record");
-    
+        
     var mediaRecorder;
     var voice = [];
     navigator.mediaDevices.getUserMedia({audio: true})
@@ -120,10 +128,11 @@ window.addEventListener("load", function(evt) {
         }
         let to = person.textContent;
         let text = input.value;
-        var js = JSON.stringify({from:user,to:to,type:"text",data:text});
+        var js = JSON.stringify({from:user,to:to,type:"text",data:text,quote:quote});
         ws.send(js);
         person.textContent = "All";
         input.value = "";
+        quote = "";
         return false;
     };
 

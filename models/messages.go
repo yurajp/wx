@@ -9,7 +9,10 @@ import (
   "html/template"
   "bytes"
   "fmt"
-//  "html"
+  "strings"
+  "log"
+  
+  "github.com/yurajp/wx/database"
 )
 
 var (
@@ -19,8 +22,6 @@ var (
 
 type User string
 
-//type Wait map[string]User
-
 type Message struct {
   Sid string `json:"sid"`
   Time DateTime `json:"time"`
@@ -28,6 +29,7 @@ type Message struct {
   To User `json:"to"`
   Type string `json:"type"`
   Data string `json:"data"`
+  Quote string `json:"quote"`
 }
 
 type DateTime struct {
@@ -125,3 +127,27 @@ func (m Message) VoiceAddr() string {
   return fmt.Sprintf("https://%s/files/records/%s.wav", Addr, m.Sid )
 }
 
+func Limited(data string) string {
+  words := strings.Fields(data)
+  lim := []string{}
+  for i := 0; i < 15; i++ {
+    lim = append(lim, words[i])
+    if i == len(words) - 1 {
+      break
+    }
+  }
+  return strings.Join(lim, " ") + "..."
+}
+
+func (m Message) HasQuote() bool {
+  return m.Quote != ""
+}
+
+func (m Message) Quoted() []string {
+  dbm, err := database.S.GetMessage(m.Quote)
+  if err != nil {
+    log.Printf("cannot get quoted message: %v", err)
+    return []string{}
+  }
+  return []string{string(dbm.From), Limited(dbm.Data)}
+}
