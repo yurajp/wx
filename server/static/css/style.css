@@ -559,11 +559,11 @@ audio::-webkit-media-controls-play-button {
 .qbox {
   width: 95%;
   word-wrap: break-word;
-/*  white-space: pre-wrap;
+  white-space: pre-wrap;
   white-space: -moz-pre-wrap;
   white-space: -pre-wrap;
   white-space: -o-pre-wrap;
-*/
+
   background: #ACB996;
   box-shadow: 1px 2px 2px #2D5E14;
   border-radius: 4px;
@@ -579,7 +579,7 @@ audio::-webkit-media-controls-play-button {
   font-size: 1.1rem;
 }
 
-.qbox pre {
+.qbox p {
   padding: 4px 12px;
   color: #17312E;
   font-family: 'Mulish';

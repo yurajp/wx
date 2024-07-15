@@ -15,10 +15,16 @@
 var quote = "";
 
 function toQuote(e) {
-    quote = e;
-    this.style.background = orange;
-      
+  var q = document.getElementById(e);
+  if (quote == e) {
+    q.style.background='#CAC0A0';
+    quote = "";
     return false;
+  }
+  quote = e;
+  q.style.background = '#E5A015';
+    
+  return false;
 }
 
 window.addEventListener("load", function(evt) {
@@ -132,6 +138,10 @@ window.addEventListener("load", function(evt) {
         ws.send(js);
         person.textContent = "All";
         input.value = "";
+        if (!quote) {
+          return false;
+        }
+        document.getElementById(quote).style.background='#CAC0A0';
         quote = "";
         return false;
     };
@@ -225,7 +235,7 @@ window.addEventListener("load", function(evt) {
     evt.preventDefault();
     if (mediaRecorder.state == "inactive") {
       mediaRecorder.start();
-	    this.style.background='yellow';
+	    this.style.background='orange';
     } else {
       mediaRecorder.stop();
       this.style.background='none';

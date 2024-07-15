@@ -130,13 +130,17 @@ func (m Message) VoiceAddr() string {
 func Limited(data string) string {
   words := strings.Fields(data)
   lim := []string{}
-  for i := 0; i < 15; i++ {
+  for i := 0; i < 9; i++ {
     lim = append(lim, words[i])
     if i == len(words) - 1 {
       break
     }
   }
-  return strings.Join(lim, " ") + "..."
+  sfx := ""
+  if len(words) > 9 {
+    sfx = "..."
+  }
+  return strings.Join(lim, " ") + sfx
 }
 
 func (m Message) HasQuote() bool {
