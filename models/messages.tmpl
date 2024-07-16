@@ -81,7 +81,7 @@
         <img class="qimg" src='static/img/mic.png'/>
       {{ end }}
       {{ if eq .Type "file" }}
-        <p><img class="qimg" src='static/img/clip.png'/> {{ .Text }} </p>
+        <img class="qimg" src='static/img/clip.png'/><span class="qfile"> {{ .Text }} </span>
       {{ end }}
     </div>
   </div>

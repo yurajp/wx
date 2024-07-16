@@ -407,7 +407,7 @@ h1 {
   display: block;
   word-wrap: break-word;
   margin: 3%;
-  padding: 6px 4%;
+  padding: 6px 5%;
   background: #CAC0A0;
   border-radius: 12px;
   box-shadow: 1px 2px 3px #3D3D27;
@@ -537,11 +537,11 @@ h2 {
 
 
 audio::-webkit-media-controls-panel {
-  background-color: #6CB66C;
+  background-color: #7ABF7A;
 }
 
 audio::-webkit-media-controls-play-button {
-  background-color: #AACFAB;
+  background-color: #ACCBAB;
   border-radius: 50%;
 }
 
@@ -564,7 +564,7 @@ audio::-webkit-media-controls-play-button {
   white-space: -pre-wrap;
   white-space: -o-pre-wrap;
 */
-  background: #ABBAAA;
+  background: #ABBEAA;
   box-shadow: 1px 2px 2px #2D5E14;
   border-radius: 4px;
 }
@@ -572,7 +572,7 @@ audio::-webkit-media-controls-play-button {
 .qfrom {
   width: 85%;
   padding: 4px 4px 3px 24px;
-  background: #7FA777;
+  background: #7FA77A;
   color: #104633;
   font-style: italic;
   font-weight: bold;
@@ -589,7 +589,7 @@ audio::-webkit-media-controls-play-button {
 
 .qimg {
   padding: 3px 5px 3px 15px;
-  width: 20px;
+  height: 24px;
 }
 
 .links {
@@ -616,6 +616,16 @@ audio::-webkit-media-controls-play-button {
 }
 
 .tlink span {
+
   font-size: 1.4rem;
-  color: #306090;
+  color: #3055A5;
+}
+
+.qfile {
+  line-height: 2.0;
+  vertical-align: 25%;
+  color: #11661A;
+  font-size: 1.3rem;
+  font-weight: bold;
+  font-family: 'Comfortaa';
 }
