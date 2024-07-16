@@ -353,7 +353,7 @@ h1 {
   font-weight: normal;
   border-radius: 24px;
   padding: 2px 32px;
-  background: #3372A2;
+  background: #306090;
   color: #CCC;
   box-shadow: 1px 4px 6px #3D4A27;
   box-shadow: inset 0 -6px 10px rgba(0,0,0,0.4);
@@ -537,7 +537,7 @@ h2 {
 
 
 audio::-webkit-media-controls-panel {
-  background-color: #66B66B;
+  background-color: #6CB66C;
 }
 
 audio::-webkit-media-controls-play-button {
@@ -559,12 +559,12 @@ audio::-webkit-media-controls-play-button {
 .qbox {
   width: 95%;
   word-wrap: break-word;
-  white-space: pre-wrap;
+/*  white-space: pre-wrap;
   white-space: -moz-pre-wrap;
   white-space: -pre-wrap;
   white-space: -o-pre-wrap;
-
-  background: #ACB996;
+*/
+  background: #ABBAAA;
   box-shadow: 1px 2px 2px #2D5E14;
   border-radius: 4px;
 }
@@ -585,5 +585,37 @@ audio::-webkit-media-controls-play-button {
   font-family: 'Mulish';
   font-size: 1.3rem;
   line-height: 0.9;
-  
+}
+
+.qimg {
+  padding: 3px 5px 3px 15px;
+  width: 20px;
+}
+
+.links {
+  display: block;
+  margin: 0 32px 6px 32px;
+  background: #ABA;
+  border-radius: 24px;
+  padding: 6px 24px;
+  box-shadow: 1px 2px 2px #224662;
+/*  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;*/
+  word-wrap: break-word;
+  line-height: 0.8;
+}
+
+.tlink a {
+  font-family: 'Comfortaa';
+  font-size: 1.0rem;
+  text-decoration: none;
+  font-weight: bold;
+  color: darkblue;
+}
+
+.tlink span {
+  font-size: 1.4rem;
+  color: #306090;
 }

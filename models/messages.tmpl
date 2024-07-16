@@ -20,15 +20,19 @@
 {{ end }}
 
 {{ define "text" }}
+  {{ $links := .LinkList }}
   <div class="inbox" id="{{ .Sid }}">
     {{ template "header" . }}
     {{ if .HasQuote }}
-    {{ template "quoted" . }}
+      {{ template "quoted" .Quoted }}
     {{ end }}
     <div class="txt">
       <pre>{{ .Data }}</pre>
     </div>
   </div>
+  {{ if $links }}
+    {{ template "links" $links }}
+  {{ end }}
 {{ end }}
 
 {{ define "file" }}
@@ -67,11 +71,26 @@
   <div class="quoted">
     <div class="strip"> </div>
     <div class="qbox">
-      <div class="qfrom">{{ index .Quoted 0 }}
+      <div class="qfrom">{{ .Header }}
       </div>
-      
-      <p>{{ index .Quoted 1 }}
-      </p>
+      {{ if eq .Type "text" }}
+        <p>{{ .Text }}
+        </p>
+      {{ end }}
+      {{ if eq .Type "voice" }}
+        <img class="qimg" src='static/img/mic.png'/>
+      {{ end }}
+      {{ if eq .Type "file" }}
+        <p><img class="qimg" src='static/img/clip.png'/> {{ .Text }} </p>
+      {{ end }}
     </div>
+  </div>
+{{ end }}
+
+{{ define "links" }}
+  <div class="links">
+  {{ range . }}
+    <p class="tlink"><a href='{{ .Href }}'><span>➤ </span>{{ .Title }}</a></p>
+  {{ end }}
   </div>
 {{ end }}

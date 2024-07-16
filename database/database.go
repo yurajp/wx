@@ -40,6 +40,10 @@ type DbMessage struct {
   Blob []byte
 }
 
+func (dt DateTime) String() string {
+  return fmt.Sprintf("%s %s", dt.Date, dt.Time)
+}
+
 func (s Storage) Store(m Message) {
   ins := "insert into blobs(sid, message) values(?, ?)"
   sid := m.Sid

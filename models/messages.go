@@ -43,6 +43,8 @@ type HtmlMessage struct {
   Content string `json:"content"`
 }
 
+
+
 func MakeId() string {
 	nt := fmt.Sprintf("%d", time.Now().UnixNano())
 	hash := sha1.New()
@@ -147,11 +149,20 @@ func (m Message) HasQuote() bool {
   return m.Quote != ""
 }
 
-func (m Message) Quoted() []string {
+type QData struct {
+  Header string
+  Type string
+  Text string
+}
+
+func (m Message) Quoted() QData {
   dbm, err := database.S.GetMessage(m.Quote)
   if err != nil {
     log.Printf("cannot get quoted message: %v", err)
-    return []string{}
+    return QData{}
   }
-  return []string{string(dbm.From), Limited(dbm.Data)}
+  
+  hd := fmt.Sprintf("%v %s", dbm.From, dbm.Time.String())
+  
+  return QData{hd, dbm.Type, Limited(dbm.Data)}
 }
