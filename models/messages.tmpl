@@ -8,14 +8,20 @@
 {{ end }}
 
 {{ define "header" }}
+  {{ $sid := .Sid }}
+  {{ $from := .From }}
+  {{ $to := .To }}
   <div class="header">
+    <div class="id-from">{{$from}}</div>
+    <div class="id-to">{{$to}}</div>
     <div class="cursiv">{{ .From }} {{ .Time.Time }}
     </div>
       {{ if .IsPrivate }}
-    <span class="private">PRIVATE</span>
+    <span class="private">to {{ $to }}</span>
       {{ end }}
     <div class="share" onclick="toQuote({{ .Sid }})"> ➥ </div>
-    <div class="trash" onclick="deleteMessage({{ .Sid }})"> 🗑 </div>
+    
+    <div class="trash" onclick="deleteMessage({{$sid}})"><img class="trash-img" src="static/img/trash.svg"/></div>
   </div>
 {{ end }}
 

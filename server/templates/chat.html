@@ -35,19 +35,20 @@
  <div id="chat">
    <div id="person">All</div>
    <div id="usermenu"></div>
-   <div id="board"><textarea id="input" value=""></textarea>
-     <div id="record">
-       <img src="static/img/mic.png">
+   <div id="board"><textarea id="input" value=""></textarea></div>
+   
+   <div id="ctr-input">
+     <div id="embed">
+       <form id="content" method="post" enctype="multipart/form-data">
+       <input type="file" id="input_file" name="files" style="display:none">
+       <label for="input_file"><img src="static/img/vector-up.png" width=28px></label>
+       </form>
      </div>
-   </div>
+
+     <button id="send">Send</button>
    
-   <button id="send">Send</button>
-   
-   <div id="embed">
-     <form id="content" method="post" enctype="multipart/form-data">
-     <input type="file" id="input_file" name="files" style="display:none">
-     <label for="input_file"><img src="static/img/vector-up.png" width=24px></label>
-     </form>
+     <div id="record">
+        <img src="static/img/mic.png"></div>
    </div>
 
    <div id="output">

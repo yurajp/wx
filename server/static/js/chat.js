@@ -1,8 +1,7 @@
   function deleteMessage(sid) {
     let user = document.getElementById("uname").textContent;
-    let urdl = 'https://'+window.location.host+"/delete?sid="+sid+"&user="+user;
     let msg = document.getElementById(sid);
-    
+    let urdl = 'https://'+window.location.host+"/delete?sid="+sid+"&user="+user;
     fetch(urdl)
     .then((res) => res.ok)
     .then((ok) => {
@@ -13,6 +12,7 @@
   }
 
 var quote = "";
+
 
 function toQuote(e) {
   var q = document.getElementById(e);
@@ -96,6 +96,17 @@ window.addEventListener("load", function(evt) {
       }
       var box = document.createElement("div");
       box.innerHTML = ms.content;
+      
+      var inner = box.getElementsByClassName("inbox")[0];
+      var hd = inner.getElementsByClassName("header")[0];
+      
+      var tr = hd.getElementsByClassName("trash")[0];
+      var fr = hd.getElementsByClassName("id-from")[0].textContent;
+      var to = hd.getElementsByClassName("id-to")[0].textContent;
+      if (to != user && fr != user) {
+        tr.style.visibility = 'hidden';
+      }
+      
       output.appendChild(box);
       output.scroll(0, output.scrollHeight);
       
@@ -193,7 +204,7 @@ window.addEventListener("load", function(evt) {
       }
       var content = document.getElementById("content");
       const url = "https://" + window.location.host + "/files";
-      const data = new FormData(content);
+      var data = new FormData(content);
       data.append("from", user);
       data.append("to", person.textContent);
       data.append("type", "file");
