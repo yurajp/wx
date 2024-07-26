@@ -29,12 +29,8 @@
   {{ $links := .LinkList }}
   <div class="inbox" id="{{ .Sid }}">
     {{ template "header" . }}
-    {{ if .HasQuote }}
-      {{ template "quoted" .Quoted }}
-    {{ end }}
-    <div class="txt">
-      <pre>{{ .Data }}</pre>
-    </div>
+    
+    {{ .Html }}
   </div>
   {{ if $links }}
     {{ template "links" $links }}
@@ -44,6 +40,11 @@
 {{ define "file" }}
   <div class="inbox" id="{{ .Sid }}">
   {{ template "header" . }}
+  
+  {{ if .HasQuote }}
+    {{ template "quoted" .Quoted }}
+  {{ end }}
+  
    <div class="flink">
     <div class="ftxt">
      <a href="{{ .FileAddr }}" target="_blank">
@@ -69,19 +70,23 @@
 {{ define "voice" }}
   <div class="inbox" id="{{ .Sid }}">
   {{ template "header" . }}
+  
+  {{ if .HasQuote }}
+    {{ template "quoted" .Quoted }}
+  {{ end }}
+  
   <audio controls src={{ .VoiceAddr }}></audio>
   </div>
 {{ end }}
 
 {{ define "quoted" }}
   <div class="quoted">
-    <div class="strip"> </div>
+    <div class="strip"></div>
     <div class="qbox">
       <div class="qfrom">{{ .Header }}
       </div>
       {{ if eq .Type "text" }}
-        <p>{{ .Text }}
-        </p>
+        {{ .Text }}
       {{ end }}
       {{ if eq .Type "voice" }}
         <img class="qimg" src='static/img/mic.png'/>

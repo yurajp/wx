@@ -38,6 +38,8 @@ func TitleScrape(url string) (string, error) {
 }
 
 func FindLinks(text string) []string {
+  text = strings.Replace(text, ">", " ", -1)
+  text = strings.Replace(text, "<", " ", -1)
   url := regexp.MustCompile(`http(s)?://*`)
   res := []string{}
   for _, w := range strings.Fields(text) {

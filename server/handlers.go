@@ -206,6 +206,7 @@ func filesHandler(w http.ResponseWriter, r *http.Request) {
 	size := header.Size
 	from := r.FormValue("from")
 	to := r.FormValue("to")
+  quote := r.FormValue("quote")
 
 	var buf bytes.Buffer
 	io.Copy(&buf, file)
@@ -219,6 +220,7 @@ func filesHandler(w http.ResponseWriter, r *http.Request) {
 	ms.From = User(from) 
 	ms.To = User(to) 
 	ms.Data = filename
+	ms.Quote = quote
 	dataCh <-ms
 
 	log.Printf("file %s from %s to %s (%vb)", filename, from, to, size)
@@ -331,6 +333,7 @@ func record(w http.ResponseWriter, r *http.Request) {
 	vms.Type = "voice"
 	vms.From = User(r.FormValue("from"))
 	vms.To = User(r.FormValue("to"))
+	vms.Quote = r.FormValue("quote")
 	filename := vms.Sid + ".wav"
 	vms.Data = filename
 	fpath := "server/files/records/" + filename

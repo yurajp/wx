@@ -152,7 +152,7 @@ func (m Message) HasQuote() bool {
 type QData struct {
   Header string
   Type string
-  Text string
+  Text template.HTML
 }
 
 func (m Message) Quoted() QData {
@@ -161,8 +161,14 @@ func (m Message) Quoted() QData {
     log.Printf("cannot get quoted message: %v", err)
     return QData{}
   }
-  
   hd := fmt.Sprintf("%v %s", dbm.From, dbm.Time.String())
+  data := strings.ReplaceAll(dbm.Data, " contenteditable='true'", "")
+  return QData{hd, dbm.Type, template.HTML(data)}
+}
+
+func (m Message) Html() template.HTML {
+  data := strings.Replace(m.Data, " contenteditable='true'", " contenteditable='false'", -1)
+  data = strings.Replace(data, " contenteditable=\"true\"", " contenteditable=\"false\"", -1)
   
-  return QData{hd, dbm.Type, Limited(dbm.Data)}
+  return template.HTML(data)
 }

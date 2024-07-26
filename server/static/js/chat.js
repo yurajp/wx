@@ -13,7 +13,7 @@
 
 var quote = "";
 
-
+/*
 function toQuote(e) {
   var q = document.getElementById(e);
   if (quote == e) {
@@ -23,9 +23,48 @@ function toQuote(e) {
   }
   quote = e;
   q.style.background = '#E5A015';
-    
+  
   return false;
 }
+*/
+
+function toQuote(e) {
+  var q = document.getElementById(e);
+  if (quote == e) {
+    q.style.background='#CAC0A0';
+    quote = "";
+    return false;
+  }
+  quote = e;
+  
+  var inp = document.querySelector("#input");
+  var qt = document.createElement("div");
+  qt.className = "quoted";
+  var str = document.createElement("div");
+  str.className = "strip";
+  qt.appendChild(str);
+  var qbx = document.createElement("div");
+  qbx.className = "qbox";
+  
+  var nq = document.createElement("div");
+  nq.innerHTML = q.innerHTML;
+  var oldq = nq.getElementsByClassName("quoted");
+  if (oldq.length > 0) {
+    nq.removeChild(oldq[0]);
+  }
+  var lks = nq.getElementsByClassName("links");
+  if (lks.length > 0) {
+    nq.removeChild(lks[0]);
+  }
+  
+  qbx.innerHTML = nq.innerHTML;
+  qt.appendChild(qbx);
+  inp.insertBefore(qt, inp.firstChild);
+  
+  return false;
+}
+
+
 
 window.addEventListener("load", function(evt) {
     var user = document.getElementById("uname").textContent;
@@ -60,6 +99,7 @@ window.addEventListener("load", function(evt) {
         let fd = new FormData();
         fd.append("from", user);
         fd.append("to", person.textContent);
+        fd.append("quote", quote);
         fd.append('voice', voiceBlob);
 
         fetch(url, {
@@ -67,6 +107,8 @@ window.addEventListener("load", function(evt) {
 	        body: fd})
         .then((e) => {
 	        voice = [];
+	        quote = "";
+	        input.innerHTML = "<pre contenteditable='true'></pre>";
         });
       });
     });  
@@ -129,7 +171,8 @@ window.addEventListener("load", function(evt) {
         
         ws.onmessage = function(evt) {
           handleMessage(evt.data);
-          sound.play();
+          
+          //sound.play();
         };
         ws.onerror = function(evt) {
             ws.close();
@@ -144,11 +187,13 @@ window.addEventListener("load", function(evt) {
             return false;
         }
         let to = person.textContent;
-        let text = input.value;
+        let text = input.innerHTML;
+        
+        
         var js = JSON.stringify({from:user,to:to,type:"text",data:text,quote:quote});
         ws.send(js);
         person.textContent = "All";
-        input.value = "";
+        input.innerHTML = "<pre contenteditable='true'></pre>";
         if (!quote) {
           return false;
         }
@@ -207,6 +252,7 @@ window.addEventListener("load", function(evt) {
       var data = new FormData(content);
       data.append("from", user);
       data.append("to", person.textContent);
+      data.append("quote", quote);
       data.append("type", "file");
       const fetchOpts = {
         method: content.method,
@@ -215,6 +261,8 @@ window.addEventListener("load", function(evt) {
       fetch(url, fetchOpts);
       evt.preventDefault();
       this.value="";
+      quote = "";
+      input.innerHTML = "<pre contenteditable='true'></pre>";
       return false;
     });
     
@@ -252,6 +300,31 @@ window.addEventListener("load", function(evt) {
       this.style.background='none';
     }
     return false;
+  });
+  
+  document.getElementById('paste').addEventListener('click', function(evt) {
+    evt.preventDefault();
+    navigator.clipboard.readText()
+  		.then((e) => {
+  			var q = document.createElement("div");
+  			q.className = "s-quoted";
+  			var str = document.createElement("div");
+  			str.className = "s-strip";
+  			q.appendChild(str);
+  			var qbx = document.createElement("div");
+  			qbx.className = "s-qbox";
+  			var spr = document.createElement("pre");
+  			spr.textContent = e;
+  			qbx.appendChild(spr);
+  			q.appendChild(qbx);
+  			input.appendChild(q);
+  			var pre = document.createElement("pre");
+  			pre.setAttribute('contenteditable', 'true'); 
+  			pre.setAttribute('autofocus', 'true'); 
+/*			pre.textContent = "\n"; */
+  			input.appendChild(pre);
+  		});
+  		
   });
 });
 
