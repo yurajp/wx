@@ -164,6 +164,16 @@ label {
   color: #EEE;
 }
 
+#bell {
+  display: inline-block;
+  padding: 0 8px;
+}
+
+#bimg {
+  width: 20px;
+  filter: invert(20%);
+}
+
 #open, #close {
   height: 26px;
 }

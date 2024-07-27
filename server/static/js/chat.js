@@ -103,6 +103,20 @@ window.addEventListener("load", function(evt) {
       });
     });  
     
+    var muted = true;
+    var bimg = document.getElementById("bimg");
+    var bell = document.getElementById("bell");
+    bell.addEventListener('click', function(e) {
+      e.preventDefault();
+      if (muted) {
+        muted = false;
+        bimg.style.filter = 'invert(90%)';
+      } else {
+        muted = true;
+        bimg.style.filter = 'invert(20%)';
+      }
+    });
+    
     var handleMessage = function(message) {
       if (!ws) {
         return false;
@@ -160,9 +174,10 @@ window.addEventListener("load", function(evt) {
         };
         
         ws.onmessage = function(evt) {
+          if (!muted) {
+            sound.play();
+          }
           handleMessage(evt.data);
-          
-          //sound.play();
         };
         ws.onerror = function(evt) {
             ws.close();
