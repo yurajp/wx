@@ -11,22 +11,13 @@
     });
   }
 
-var quote = "";
-
-/*
-function toQuote(e) {
-  var q = document.getElementById(e);
-  if (quote == e) {
-    q.style.background='#CAC0A0';
-    quote = "";
-    return false;
-  }
-  quote = e;
-  q.style.background = '#E5A015';
-  
+function setTo(p) {
+  var person = document.getElementById("person");
+  person.textContent = p;
   return false;
 }
-*/
+
+var quote = "";
 
 function toQuote(e) {
   var q = document.getElementById(e);
@@ -63,7 +54,6 @@ function toQuote(e) {
   
   return false;
 }
-
 
 
 window.addEventListener("load", function(evt) {
@@ -321,11 +311,9 @@ window.addEventListener("load", function(evt) {
   			var pre = document.createElement("pre");
   			pre.setAttribute('contenteditable', 'true'); 
   			pre.setAttribute('autofocus', 'true'); 
-/*			pre.textContent = "\n"; */
-  			input.appendChild(pre);
-  		});
-  		
+
+			input.appendChild(pre);
+		});
+		
   });
 });
-
-

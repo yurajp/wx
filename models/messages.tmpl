@@ -14,7 +14,7 @@
   <div class="header">
     <div class="id-from">{{$from}}</div>
     <div class="id-to">{{$to}}</div>
-    <div class="cursiv">{{ .From }} {{ .Time.Time }}
+    <div class="cursiv" onclick="setTo({{ .From }})">{{ .From }} {{ .Time.Time }}
     </div>
       {{ if .IsPrivate }}
     <span class="private">to {{ $to }}</span>
@@ -101,7 +101,15 @@
 {{ define "links" }}
   <div class="links">
   {{ range . }}
-    <p class="tlink"><a href='{{ .Href }}'><span>➤ </span>{{ .Title }}</a></p>
+  <div class="linkRow">
+    {{ if .ImgUrl }}
+    <div class="timg">
+    <img src='{{ .ImgUrl }}'>
+    </div>
+    {{ end }}
+    <div class="tlink"><a href='{{ .Href }}' target="_blank">
+    {{ .Title }}</a></div>
+  </div>
   {{ end }}
   </div>
 {{ end }}

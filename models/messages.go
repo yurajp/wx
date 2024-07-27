@@ -43,8 +43,6 @@ type HtmlMessage struct {
   Content string `json:"content"`
 }
 
-
-
 func MakeId() string {
 	nt := fmt.Sprintf("%d", time.Now().UnixNano())
 	hash := sha1.New()
@@ -162,13 +160,16 @@ func (m Message) Quoted() QData {
     return QData{}
   }
   hd := fmt.Sprintf("%v %s", dbm.From, dbm.Time.String())
-  data := strings.ReplaceAll(dbm.Data, " contenteditable='true'", "")
+  data := strings.ReplaceAll(dbm.Data,  `contenteditable="true"`, "contenteditable='false'")
+  data = strings.ReplaceAll(dbm.Data, " contenteditable='true'", "contenteditable=\"false\"")
+  
+  
   return QData{hd, dbm.Type, template.HTML(data)}
 }
 
 func (m Message) Html() template.HTML {
   data := strings.Replace(m.Data, " contenteditable='true'", " contenteditable='false'", -1)
-  data = strings.Replace(data, " contenteditable=\"true\"", " contenteditable=\"false\"", -1)
+  data = strings.Replace(data, ` contenteditable="true"`, ` contenteditable="false"`, -1)
   
   return template.HTML(data)
 }

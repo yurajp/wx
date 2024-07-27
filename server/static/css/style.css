@@ -116,7 +116,6 @@ body {
   color: #29577F;
 }
 
-
 /* _________________ */
 
 #ctrl {
@@ -153,8 +152,7 @@ body {
 label {
   display: block;
   padding-left: 8px;
-/*  transform: rotateZ(-10deg);*/
-  font-size: 1.0rem;
+  font-size: 0.8rem;
 }
 
 #username {
@@ -251,7 +249,6 @@ h1 {
   justify-content: space-between;
   width: 100%;
 }
-
 
 /* _______________  */
 
@@ -593,7 +590,7 @@ audio::-webkit-media-controls-play-button {
   border-radius: 0 4px 12px 0;
   margin-bottom: 6px;
   color: #17312E;
-  padding: 3px 8px;
+/*  padding: 3px 8px; */
 }
 
 .qfrom {
@@ -618,7 +615,6 @@ audio::-webkit-media-controls-play-button {
 
 .qbox .header {
   border-radius: 0 4px 0 0;
-/*  padding: 2px; */
 }
 
 .qbox .header .share, .qbox .header .trash {
@@ -639,14 +635,31 @@ audio::-webkit-media-controls-play-button {
 }
 
 .links {
-  display: block;
-  margin: 0 48px 4px 24px;
-  background: #CBACBA;
-  border-radius: 16px;
-  padding: 3px 20px;
+  display: flex;
+  flex-direction: column;
+  margin: 0 20px 3px 20px;
+  background: #CFBABA;
+  border-radius: 8px;
+  padding: 4px 10px;
   box-shadow: 1px 2px 2px #224662;
   word-wrap: break-word;
   line-height: 1.0;
+}
+
+.linkRow {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.timg {
+  display: block;
+  width:30%;
+}
+
+.tlink {
+  display:block;
+  width: 70%;
 }
 
 .tlink a {
@@ -654,13 +667,11 @@ audio::-webkit-media-controls-play-button {
   font-size: 1.2rem;
   text-decoration: none;
   font-weight: bold;
-  color: darkblue;
+  color: #335277;
 }
 
-.tlink span {
-
-  font-size: 1.4rem;
-  color: #3555A5;
+.timg img {
+  width: 64px;
 }
 
 .qfile {
@@ -679,10 +690,11 @@ audio::-webkit-media-controls-play-button {
 .s-quoted {
   display: flex;
   margin: 0 6px;
+  overflow-x: scroll;
 }
 
 .s-strip {
-  width: 1%;
+  width: 2%;
   background: #5D5C45;
   border-radius: 2px 0 0 2px;
   margin-bottom: 4px;

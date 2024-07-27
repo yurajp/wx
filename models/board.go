@@ -1,7 +1,6 @@
 package models
 
 import (
-//  "net"
   "os"
   "log"
   "fmt"
@@ -330,4 +329,3 @@ func (u User) Avatar() string {
 	}
 	return res
 }
-
