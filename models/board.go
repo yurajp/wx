@@ -38,7 +38,6 @@ type Board struct {
   M map[User]WC
 }
 
-// NEW
 type SidMap map[User][]string
 
 type ChatMap map[User]SidMap
@@ -180,7 +179,6 @@ func NewChatMap(b *Board) *ChatMap {
   }
   return &cm
 }
-
 
 func ServerMessage(text string) *Message {
   m := NewMessage()

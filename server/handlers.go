@@ -105,7 +105,9 @@ func welcome(w http.ResponseWriter, r *http.Request) {
       }
     default:
       ac := AuthCase{user, authCase}
- //     fmt.Printf("%+v\n", ac)
+      
+      fmt.Printf("%+v\n", ac)
+      
       err := authTmpl.Execute(w, ac)
       if err != nil {
         fmt.Println(err)
@@ -133,52 +135,44 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
   if err != nil {
     log.Printf("unmarshal data: %v", err)
   }
+  
   hpin := models.HashPin(post.Pin)
   name := post.Name
   acase := post.Case
   sucmap := map[string]string{"message": "success"}
-  success, _ := json.Marshal(sucmap)
+  success, err := json.Marshal(sucmap)
+  if err != nil {
+    log.Printf("success marshal: %v", err)
+  }
   wrongmap := map[string]string{"message": "wrong pin"}
   wrongpin, _ := json.Marshal(wrongmap)
   user := User(name)
   remote := host(r)
   reg := models.LoadRegistry()
   
+	w.Header().Set("Content-Type", "application/json")
+  
   switch (acase) {
   case "0":
     if user.IsValid() {
-      
-      fmt.Printf("New user %v is valid\n", user)
-   
       reg.AddAuth(remote, name, hpin)
     } else {
-      
-      fmt.Printf("user %v NOT valid\n", user)
-      
-		  w.WriteHeader(http.StatusUnauthorized)
 		  w.Write([]byte(`{"message":"not valid name"}`))
 		  return
     }
   case "2":
     if hpin != reg.GetHPin(user) {
-		  w.Header().Set("Content-Type", "application/json")
 		  w.Write(wrongpin)
       return
     }
  
   case "3":
     if hpin != reg.GetHPin(user) {
-	    w.Header().Set("Content-Type", "application/json")
 		  w.Write(wrongpin)
       return
     }
   }
-
-  w.Header().Set("Content-Type", "application/json")
   w.Write(success)
-  
-  time.Sleep(1 * time.Second)
-	chatTmpl.Execute(w, user)
 }
 
 func proceed(w http.ResponseWriter, r *http.Request) {

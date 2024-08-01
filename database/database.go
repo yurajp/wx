@@ -224,24 +224,23 @@ func SidsToHide(user, other string) ([]string, error) {
   query := "select * from blobs"
   rows, err := S.Db.Query(query)
   if err != nil {
-  		return []string{}, err
-  	}
-  	defer rows.Close()
-  	
-  	for rows.Next() {
-  		var dr DbMessage
-  		rows.Scan(&dr.Sid, &dr.Blob)
-  		var m Message
-  		err = json.Unmarshal(dr.Blob, &m)
-  		if err != nil {
-  		  return []string{}, err
-  		}
-  		cond := (m.From == u && m.To == o) || (m.From == o && m.To == u)
-  		if !cond {
-  		  sids = append(sids, m.Sid)
-  		}
-  	}
-//	fmt.Println("Would be hidden ", len(sids), "messages")
-  	
-  	return sids, nil
+		return []string{}, err
+	}
+	defer rows.Close()
+	
+	for rows.Next() {
+		var dr DbMessage
+		rows.Scan(&dr.Sid, &dr.Blob)
+		var m Message
+		err = json.Unmarshal(dr.Blob, &m)
+		if err != nil {
+		  return []string{}, err
+		}
+		cond := (m.From == u && m.To == o) || (m.From == o && m.To == u)
+		if !cond {
+		  sids = append(sids, m.Sid)
+		}
+	}
+	
+	return sids, nil
 }

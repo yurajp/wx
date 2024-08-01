@@ -268,8 +268,6 @@ h1 {
  box-shadow: inset 0 -5px 10px rgba(0,0,0,0.4);
 }
 
-
-
 #board {
   display: flex;
   justify-content: space-between;
@@ -502,6 +500,7 @@ h2 {
 }
 
 #btcont {
+  display: none;
   font-size: 1.6rem;
   font-weight: bold;
   padding: 6px 24px;
@@ -565,7 +564,6 @@ h2 {
   color: maroon;
 }
 
-
 .private {
   color: #BCB;
   font-style: italic;
@@ -577,14 +575,14 @@ h2 {
   position: relative;
   left: 60%;
   width: 25%;
-  padding: 3px;
+  padding: 1px 4px;
   text-align: center;
-  background: #772211;
+  background: #7E3023;
   font-weight: bold;
   color: #CCC;
   font-size: 1.2rem;
   border-radius: 6px;
-  box-shadow: 1px 2px 1px #3B3B10;
+  box-shadow: 1px 1px 1px #3B3B10;
   margin-bottom: 4px;
 }
 
@@ -748,5 +746,5 @@ audio {
 .s-qbox pre {
   font-size: 1.2rem;
   white-space: pre-wrap;
-  word-wrap: break-all;
+  word-wrap: normal;
 }

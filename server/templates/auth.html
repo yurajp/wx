@@ -47,7 +47,7 @@
   </div>
   
   <script type="text/javascript">
- window.addEventListener("load", function(e) {
+  window.addEventListener("load", function(e) {
     var name = document.getElementById("username").textContent;
     var cas = document.getElementById('acase').textContent;
     var form = document.getElementById("authform");
@@ -56,49 +56,57 @@
     var resp = document.getElementById("authresp");
     var btn = document.getElementById("sendpin");
     var blk = document.getElementById("authblock");
+    var bcnt = document.getElementById("btcont");
     
     btn.addEventListener('click', function(evt) {
       var data = {pin: pin.value, name: name.trim(), cas: cas.trim()};
       var js = JSON.stringify(data);
       const url = "https://"+window.location.host+"/auth";
       
+      var result;
       fetch(url, {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: js,
       })
       .then(function(res) {
-//        if (!res.ok) {
-//          throw new Error("BAD RESPONSE");
-//        }
+        if (!res.ok) {
+          throw new Error("BAD RESPONSE");
+        }
          return res.json();
-        })
+      })
       .then(function(jsn) {
-        return jsn.message
+        return jsn.message;
       })
       .then(function(mes) {
         blk.style.display='none';
         cont.style.display='flex';
+        if (mes == 'success') {
+          bcnt.style.display = 'inline-block';
+        }
         var ymes = document.createElement("p");
         ymes.textContent = mes;
         resp.appendChild(ymes);
-        var ynm = document.createElement("p");
-        ynm.textContent="Your login: " + name.trim();
-        resp.appendChild(ynm);
-        var ypn = document.createElement("p");
-        ypn.textContent = "Your pin: " + pin.value.trim();
-        resp.appendChild(ypn);
+        if (cas === "0" ) {
+          var ynm = document.createElement("p");
+          ynm.textContent="Your login: " + name.trim();
+          resp.appendChild(ynm);
+          var ypn = document.createElement("p");
+          ypn.textContent = "Your pin: " + pin.value.trim();
+          resp.appendChild(ypn);
+        }
       })
-      .catch((error) => {
+      .catch((err) => {
         cont.style.display='block';
-        resp.textContent = error;
+        resp.textContent=err;
       });
-      document.getElementById("btcont").addEventListener('click', (e) => {
+    
+      bcnt.addEventListener('click', (e) => {
         const url = "https://"+window.location.host+"/cont?user="+name.trim();
         window.location.replace(url);
       });
     });
- });   
+  });   
   </script>
 </body>
 </html>
