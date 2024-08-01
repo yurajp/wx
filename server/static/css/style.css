@@ -137,7 +137,7 @@ body {
   height: 36px;
   display: inline-block;
   overflow: hidden;
-  border: 1px solid gray;
+  border: 1px solid #8BB0AB;
   border-radius: 50%;
 }
 
@@ -220,18 +220,34 @@ h1 {
   gap: 8px;
 }
 
+#filter {
+  display: block;
+  width: 26px;
+  height: 26px;
+  overflow: hidden;
+  border: 1px solid #8BB0AB;
+  border-radius: 50%;
+  position: relative;
+  right: 33vw;
+  bottom: 32px;
+  margin-bottom: -24px;
+}
+
+#filter img {
+  width: 100%;
+  object-fit: cover;
+}
 
 #paste {
   display: block;
   position: relative;
   left: 35vw;
   bottom: 20px;
-  margin-bottom: -20px;
+  margin-bottom: -24px;
 }
 
 #paste img {
-  filter: invert(92%);
-  width: 16px;
+  width: 18px;
 }
 
 #person {
@@ -263,13 +279,13 @@ h1 {
 /* _______________  */
 
 #input {
-  min-height: 5vh;
+  min-height: 3vh;
   width: 100%;
   margin: 0 20px;
   padding: 3px 16px;
   border: 1px solid gray;
   border-radius: 16px;
-  background: #CABCA0;
+  background: #E6DBBC;
   box-shadow: inset 0 0 16px rgba(5,5,1,0.2);
 
 }
@@ -292,6 +308,7 @@ h1 {
 
 #record img {
   width: 20px;
+  filter: brightness(1.4);
 }
 
 #chat {
@@ -395,10 +412,10 @@ h1 {
   display: flex;
   justify-content: space-between;
   margin: 4px 4%;
-  padding: 4px 15px;
-  background: #2A7F2A;
-  border-radius: 12px;
-  box-shadow: 1px 2px 3px #3D3A27;
+  padding: 6px 12px;
+  background: #44672A;
+  border-radius: 26px;
+  box-shadow: 1px 2px 1px #3D3A27;
 }
 
 .ftxt {
@@ -414,7 +431,7 @@ h1 {
 }
 
 .ftxt a img {
-  width: 32px;
+  width: 26px;
   padding-right: 8px;
 }
 
@@ -441,7 +458,7 @@ h1 {
   font-size: 1.3rem;
   font-family: 'Comfortaa';
   white-space: pre-wrap;
-  outline: 0px solid transparent;
+  outline: 0 solid transparent;
   word-wrap: break-word;
 }
 
@@ -512,7 +529,7 @@ h2 {
 .header {
   display: flex;
   justify-content: space-between;
-  background: #2C6446;
+  background: #2F6446;
   margin-bottom: 3px;
   padding: 4px;
   border-radius: 12px;
@@ -524,8 +541,12 @@ h2 {
   font-size: 1.2rem;
   color: darkblue;
   background: #ABBEAA;
-  padding: 2px;
+  padding: 0 4px;
   cursor: pointer;
+}
+
+.share img {
+  width: 8px;
 }
 
 .trash {
@@ -567,11 +588,6 @@ h2 {
   margin-bottom: 4px;
 }
 
-.inbox audio {
-  width: 100%;
-}
-
-
 audio::-webkit-media-controls-panel {
   background-color: #66AA77;
 }
@@ -580,6 +596,12 @@ audio::-webkit-media-controls-play-button {
   background-color: #ACCCAA;
   border-radius: 50%;
 }
+
+audio {
+  padding: 4px 6px;
+  width: calc(100% - 12px);
+}
+
 
 .quoted {
   display: flex;
@@ -594,7 +616,7 @@ audio::-webkit-media-controls-play-button {
 }
 
 .qbox {
-  width: 96%;
+  width: 100%;
   background: #ABBEAA;
   box-shadow: 1px 2px 1px #2D5E14;
   border-radius: 0 4px 12px 0;
@@ -647,11 +669,11 @@ audio::-webkit-media-controls-play-button {
 .links {
   display: flex;
   flex-direction: column;
-  margin: 0 20px 3px 20px;
-  background: #CFBABA;
+  margin: 4px;
+  background: #D0CAD0;
   border-radius: 8px;
   padding: 4px 10px;
-  box-shadow: 1px 2px 2px #224662;
+  box-shadow: 1px 2px 1px #224662;
   word-wrap: break-word;
   line-height: 1.0;
 }
@@ -664,16 +686,17 @@ audio::-webkit-media-controls-play-button {
 
 .timg {
   display: block;
-  width:30%;
+  width:24%;
 }
 
 .tlink {
   display:block;
-  width: 70%;
+  width: 76%;
+  padding: 0 12px;
 }
 
 .tlink a {
-  font-family: 'Comfortaa';
+  font-family: 'Mulish';
   font-size: 1.2rem;
   text-decoration: none;
   font-weight: bold;
@@ -681,13 +704,13 @@ audio::-webkit-media-controls-play-button {
 }
 
 .timg img {
-  width: 64px;
+  width: 100%;
 }
 
 .qfile {
   line-height: 2.0;
-  vertical-align: 25%;
-  color: #11661A;
+  vertical-align: 20%;
+  color: #5B7C2A;
   font-size: 1.3rem;
   font-weight: bold;
   font-family: 'Comfortaa';
@@ -714,12 +737,12 @@ audio::-webkit-media-controls-play-button {
 .s-qbox {
   width: 100%;
   max-width: 100%;
-  background: #BDBCBA;
+  background: #E6DBBC;
   box-shadow: 1px 1px 1px #2A4514;
   border-radius: 0 2px 8px 0;
   margin-bottom: 4px;
   color: #17312E;
-  padding: 3px 8px;
+  padding: 4px 8px;
 }
 
 .s-qbox pre {

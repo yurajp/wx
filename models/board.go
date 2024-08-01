@@ -22,6 +22,7 @@ const (
   InvalidInput
 )
 
+var CM ChatMap
 
 type Auth struct {
   User User
@@ -36,6 +37,12 @@ type Board struct {
   X sync.Mutex
   M map[User]WC
 }
+
+// NEW
+type SidMap map[User][]string
+
+type ChatMap map[User]SidMap
+
 
 func (rg Registry) AddAuth(addr, name, pin string) {
    auth := Auth{User(name), HashPin(pin)}
@@ -165,6 +172,16 @@ func NewBoard(rg Registry) *Board {
   return &b
 }
 
+func NewChatMap(b *Board) *ChatMap {
+  cm := make(ChatMap)
+  for u := range b.M {
+     sm := SidMap{}
+     cm[u] = sm
+  }
+  return &cm
+}
+
+
 func ServerMessage(text string) *Message {
   m := NewMessage()
   m.Type = "server"
@@ -177,15 +194,13 @@ func (b *Board) Attach(u User, wc WC) {
   m := ServerMessage(text)
   b.BroadcastMessage(m)
   
-  b.X.Lock()
   b.M[u] = wc
+  b.X.Lock()
   b.X.Unlock()
   b.PublicateBoard()
   du := database.User(u)
   dms := database.S.LoadMessagesFor(du)
   ms := ConvertMessages(dms)
-  
-  fmt.Println("loaded", len(ms), "messages")
   
   b.SendMessagesTo(ms, u)
 }
@@ -273,13 +288,31 @@ func FromDb(dm *database.Message) *Message {
   return &m
 }
 
+func (cm *ChatMap) Renew(u User, m *Message) {
+  sidmap := CM[u]
+  var companion User
+  if m.To == u {
+    companion = m.From
+  } else {
+    companion = m.To
+  }
+  ls := sidmap[companion]
+  ls = append(ls, m.Sid)
+  sidmap[companion] = ls
+  CM[u] = sidmap
+}
+
+
 func (b *Board) SendMessagesTo(mss []*Message, u User ) {
-  
   wc := b.M[u]
   if wc == nil {
     return
   }
   for _, m := range mss {
+    if m.IsPrivate() {
+      CM.Renew(u, m)
+    }
+    
     hm, err := m.ToHtmlMessage()
     if err != nil {
       log.Printf("message error: %v", err)
@@ -310,7 +343,10 @@ func (b *Board) ListenChat(dataCh chan *Message) {
       dms := ms.CrossDb()
       database.S.Store(dms)
     }
+    
     if ms.IsPrivate() {
+      CM.Renew(ms.To, ms)
+      CM.Renew(ms.From, ms)
       b.ResendMessage(ms)
     } else {
       b.BroadcastMessage(ms)
@@ -324,7 +360,7 @@ func (u User) Avatar() string {
 	res := "static/img/user.png"
 	if _, err := os.Stat("server/" + path + ".jpg"); !os.IsNotExist(err) {
 		res = path + ".jpg"
-	} else if _, err := os.Stat("server" + path + ".png"); !os.IsNotExist(err) {
+	} else if _, err := os.Stat("server/" + path + ".png"); !os.IsNotExist(err) {
 		res = path + ".png"
 	}
 	return res

@@ -104,6 +104,8 @@ func deselectQuotes(ht string) string {
 	if idx == len(divs) - 1 {
 	  tail = strings.Join(tails[len(tails)-idx:], " ")
 	}
-
+  if tail != "" {
+    tail = strings.Split(tail, `<div class="links"`)[0]
+  }
 	return head + tail
 }

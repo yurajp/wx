@@ -14,6 +14,8 @@
 function setTo(p) {
   var person = document.getElementById("person");
   person.textContent = p;
+  compAvatar(p);
+  
   return false;
 }
 
@@ -27,7 +29,6 @@ function toQuote(e) {
     return false;
   }
   quote = e;
-  
   var inp = document.querySelector("#input");
   var qt = document.createElement("div");
   qt.className = "quoted";
@@ -36,7 +37,6 @@ function toQuote(e) {
   qt.appendChild(str);
   var qbx = document.createElement("div");
   qbx.className = "qbox";
-  
   var nq = document.createElement("div");
   nq.innerHTML = q.innerHTML;
   var oldq = nq.getElementsByClassName("quoted");
@@ -47,7 +47,6 @@ function toQuote(e) {
   if (lks.length > 0) {
     nq.removeChild(lks[0]);
   }
-  
   qbx.innerHTML = nq.innerHTML;
   qt.appendChild(qbx);
   inp.insertBefore(qt, inp.firstChild);
@@ -55,15 +54,29 @@ function toQuote(e) {
   return false;
 }
 
+function compAvatar(comp) {
+  var fimg = document.getElementById("fimg");
+  fetch("https://" + window.location.host + "/avatar?comp=" + comp)
+  .then((res) => {
+    return res.text();
+  })
+  .then((avatar) => {
+    fimg.setAttribute("src", avatar);
+  });
+}
+
 
 window.addEventListener("load", function(evt) {
-    var user = document.getElementById("uname").textContent;
+    var user = document.getElementById("username").textContent;
+    var ctrl = document.getElementById("ctrl");
     var users = ["+All"];
     var output = document.getElementById("output");
     var usermenu = document.getElementById("usermenu");
     var person = document.getElementById("person");
+    var fimg = document.getElementById("fimg");
     var input = document.getElementById("input");
     var home = window.location.host;
+    var filtered = false;
     var sound = new Audio('static/snd/message.mp3');
     var ws;
     let date = new Date("01 Jan");
@@ -194,10 +207,12 @@ window.addEventListener("load", function(evt) {
         let to = person.textContent;
         let text = input.innerHTML;
         
-        
         var js = JSON.stringify({from:user,to:to,type:"text",data:text,quote:quote});
         ws.send(js);
-        person.textContent = "All";
+        
+        if(!filtered) {
+          person.textContent = "All";
+        }
         input.innerHTML = "<pre contenteditable='true'></pre>";
         if (!quote) {
           return false;
@@ -235,10 +250,12 @@ window.addEventListener("load", function(evt) {
         } else {
           li.className = "offline";
         }
-        li.addEventListener('click', (e)=>{
+        li.addEventListener('click', (e) => {
+          e.preventDefault();
           let name = e.target.textContent;
-          person.textContent = name;
-          usermenu.style.display='none';
+          
+          setTo(name);
+          usermenu.style.display = 'none';
         });
         ul.appendChild(li);
       });
@@ -329,6 +346,71 @@ window.addEventListener("load", function(evt) {
 
 			input.appendChild(pre);
 		});
-		
   });
+  
+  var unhide = function() {
+    var boxes = document.getElementsByClassName("inbox");
+    Array.from(boxes).forEach((b) => {
+      b.style.display = 'block';
+    });
+    return false;
+  }
+  
+  var hide = function() {
+    var boxes = document.getElementsByClassName("inbox");
+    Array.from(boxes).forEach((b) => {
+      b.style.display = 'none';
+    });
+    return false;
+  }
+  
+  document.getElementById('filter').addEventListener('click', function(evt) {
+    evt.preventDefault();
+    if (filtered) {
+       filtered = false;
+       unhide();
+       ctrl.style.display = 'flex';
+       this.style.width ='26px';
+       this.style.height ='26px';
+       return false;
+    }
+    
+    let man = person.textContent;
+
+    if (man == "All") {
+      unhide();
+  /*    
+      ctrl.style.display = 'flex';
+      
+      this.style.width = '26px';
+      this.style.height = '26px';
+      fimg.setAttribute('src', 'files/avatars/All.png');
+    */  
+      
+    } else {
+    
+      hide();
+      let uri = "https://" + window.location.host + "/filter?user="+user+"&other="+man;
+      fetch(uri)
+      .then((ms) => {
+        return ms.json();
+      })
+      .then((jm) => {
+        return jm.list;
+      })
+      .then((list) => {
+        list.forEach((el) => {
+          document.getElementById(el).style.display = 'block';
+        });
+      });
+    }
+    ctrl.style.display = 'none';
+    filtered = true;
+    compAvatar(man);
+    this.style.width = '36px';
+    this.style.height = '36px';
+    
+    return false;
+  });
+  
 });

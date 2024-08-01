@@ -58,7 +58,6 @@ func translator(w http.ResponseWriter, r *http.Request) {
 	    continue
 	  }
 		dataCh <-m
-		fmt.Print(">")
 	}
 }
 
@@ -98,7 +97,7 @@ func welcome(w http.ResponseWriter, r *http.Request) {
       
     case models.KnownUknownA:
       wait[remote] = user
-      log.Printf("user %v, is waited", user)
+      log.Printf("user %v online", user)
       err = chatTmpl.Execute(w, user)
       if err != nil {
         log.Printf("chat Tmpl err: %v", err)
@@ -106,9 +105,7 @@ func welcome(w http.ResponseWriter, r *http.Request) {
       }
     default:
       ac := AuthCase{user, authCase}
-      
-      fmt.Printf("%+v\n", ac)
-      
+ //     fmt.Printf("%+v\n", ac)
       err := authTmpl.Execute(w, ac)
       if err != nil {
         fmt.Println(err)
@@ -344,4 +341,28 @@ func record(w http.ResponseWriter, r *http.Request) {
 	log.Print("voice message saved")
 	
   dataCh <-vms
+}
+
+func filter(w http.ResponseWriter, r *http.Request) {
+  user := r.URL.Query().Get("user")
+  other := r.URL.Query().Get("other")
+  showMap := models.CM[User(user)]
+  showList := showMap[User(other)]
+
+  hl := struct {
+    List []string `json:"list"`
+  }{showList}
+  list, err := json.Marshal(hl)
+  if err != nil {
+    log.Printf("handle filter  error: %v", err)
+    return
+  }
+  w.Write(list)
+}
+
+func avatar(w http.ResponseWriter, r *http.Request) {
+  name := r.URL.Query().Get("comp")
+  av := User(name).Avatar()
+  
+  w.Write([]byte(av))
 }

@@ -117,12 +117,15 @@ func Start() {
   mux.HandleFunc("/newavatar", editAvatar)
   mux.HandleFunc("/clear", clear)
   mux.HandleFunc("/record", record)
+  mux.HandleFunc("/filter", filter)
+  mux.HandleFunc("/avatar", avatar)
   
   dataCh = make(chan *Message, 5)
   
   wait = Wait{}
   rg := models.LoadRegistry()
   B = models.NewBoard(rg)
+  models.CM = *models.NewChatMap(B)
   models.Addr = addr
   
   go B.ListenChat(dataCh)

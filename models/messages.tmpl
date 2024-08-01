@@ -19,7 +19,7 @@
       {{ if .IsPrivate }}
     <span class="private">to {{ $to }}</span>
       {{ end }}
-    <div class="share" onclick="toQuote({{ .Sid }})"> ➥ </div>
+    <div class="share" onclick="toQuote({{ .Sid }})"><img src="static/img/quote.svg"></div>
     
     <div class="trash" onclick="deleteMessage({{$sid}})"><img class="trash-img" src="static/img/trash.svg"/></div>
   </div>
@@ -29,12 +29,11 @@
   {{ $links := .LinkList }}
   <div class="inbox" id="{{ .Sid }}">
     {{ template "header" . }}
-    
-    {{ .Html }}
+      {{ .Html }}
+    {{ if $links }}
+      {{ template "links" $links }}
+    {{ end }}
   </div>
-  {{ if $links }}
-    {{ template "links" $links }}
-  {{ end }}
 {{ end }}
 
 {{ define "file" }}

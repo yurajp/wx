@@ -78,7 +78,7 @@ func (m *Message) FileImage() string {
   ext := filepath.Ext(m.Data)
   t := "other"
   switch ext {
-    case ".png", ".jpg", ".jpeg":
+    case ".png", ".jpg", ".jpeg", "svg":
       t = "image"
     case ".mp3", ".wav", ".ogg", ".m4a":
       t = "audio"
