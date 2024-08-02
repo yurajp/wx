@@ -250,13 +250,12 @@ window.addEventListener("load", function(evt) {
       return false;
     }
 
-    var filterChat = function() {
-      hide();
-      man = document.getElementById("person").textContent;
+    var filterChat = function(man) {
       if (man == "All") {
         unhide();
         return false;
       }
+      hide();
       let uri = "https://" + window.location.host + "/filter?user="+user+"&other="+man;
       fetch(uri)
       .then((ms) => {
@@ -297,7 +296,7 @@ window.addEventListener("load", function(evt) {
           
           setTo(name);
           if (filtered) {
-            filterChat();
+            filterChat(name);
           }
           usermenu.style.display = 'none';
         });
@@ -404,36 +403,7 @@ window.addEventListener("load", function(evt) {
     }
     
     let man = person.textContent;
-
-    if (man == "All") {
-      unhide();
-  /*    
-      ctrl.style.display = 'flex';
-      
-      this.style.width = '26px';
-      this.style.height = '26px';
-      fimg.setAttribute('src', 'files/avatars/All.png');
-    */  
-      
-    } else {
- /*   
-      hide();
-      let uri = "https://" + window.location.host + "/filter?user="+user+"&other="+man;
-      fetch(uri)
-      .then((ms) => {
-        return ms.json();
-      })
-      .then((jm) => {
-        return jm.list;
-      })
-      .then((list) => {
-        list.forEach((el) => {
-          document.getElementById(el).style.display = 'block';
-        });
-      });
-      */
-      filterChat();
-    }
+    filterChat(man);
     ctrl.style.display = 'none';
     filtered = true;
     compAvatar(man);
