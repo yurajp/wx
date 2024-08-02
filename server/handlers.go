@@ -340,7 +340,10 @@ func record(w http.ResponseWriter, r *http.Request) {
 func filter(w http.ResponseWriter, r *http.Request) {
   user := r.URL.Query().Get("user")
   other := r.URL.Query().Get("other")
-  showMap := models.CM[User(user)]
+  showMap, ok := models.CM[User(user)]
+  if !ok {
+    showMap = models.SidMap{}
+  }
   showList := showMap[User(other)]
 
   hl := struct {

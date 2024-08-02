@@ -148,6 +148,7 @@ body {
 
 #input_img {
   padding-left: 20px;
+  cursor: pointer;
 }
 label {
   display: block;
@@ -231,6 +232,7 @@ h1 {
   right: 33vw;
   bottom: 32px;
   margin-bottom: -24px;
+  cursor: pointer;
 }
 
 #filter img {
@@ -330,6 +332,7 @@ h1 {
   font-size: 1.3rem;
   font-weight: 400;
   line-height: 1.6;
+  cursor: pointer;
 }
 
 .online {

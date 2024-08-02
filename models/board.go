@@ -46,11 +46,12 @@ type ChatMap map[User]SidMap
 func (rg Registry) AddAuth(addr, name, pin string) {
    auth := Auth{User(name), HashPin(pin)}
    
-   fmt.Printf("New auth: %+v\n", auth)
+   fmt.Printf("New authority: %+v\n", auth)
    
    rg[addr] = auth
-   
    rg.Save()
+   
+   CM[User(name)] = SidMap{}
 }
 
 func HashPin(pin string) string {
@@ -287,14 +288,20 @@ func FromDb(dm *database.Message) *Message {
 }
 
 func (cm *ChatMap) Renew(u User, m *Message) {
-  sidmap := CM[u]
+  sidmap, ok := CM[u]
+  if !ok {
+    CM[u] = SidMap{}
+  }
   var companion User
   if m.To == u {
     companion = m.From
   } else {
     companion = m.To
   }
-  ls := sidmap[companion]
+  ls, ok := sidmap[companion]
+  if !ok {
+    ls = []string{}
+  }
   ls = append(ls, m.Sid)
   sidmap[companion] = ls
   CM[u] = sidmap
