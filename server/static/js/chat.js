@@ -11,11 +11,14 @@
     });
   }
 
+
+
+
 function setTo(p) {
   var person = document.getElementById("person");
   person.textContent = p;
-  compAvatar(p);
   
+  compAvatar(p);
   return false;
 }
 
@@ -231,6 +234,44 @@ window.addEventListener("load", function(evt) {
         return false;
     };
     
+    var hide = function() {
+      var boxes = document.getElementsByClassName("inbox");
+      Array.from(boxes).forEach((b) => {
+        b.style.display = 'none';
+      });
+      return false;
+    }
+    
+    var unhide = function() {
+      var boxes = document.getElementsByClassName("inbox");
+      Array.from(boxes).forEach((b) => {
+        b.style.display = 'block';
+      });
+      return false;
+    }
+
+    var filterChat = function() {
+      hide();
+      man = document.getElementById("person").textContent;
+      if (man == "All") {
+        unhide();
+        return false;
+      }
+      let uri = "https://" + window.location.host + "/filter?user="+user+"&other="+man;
+      fetch(uri)
+      .then((ms) => {
+        return ms.json();
+      })
+      .then((jm) => {
+         return jm.list;
+      })
+      .then((list) => {
+        list.forEach((el) => {
+          document.getElementById(el).style.display = 'block';
+        });
+      });
+    }
+    
     person.onclick = function(evt) {
       if (!users) {
         return false;
@@ -255,6 +296,9 @@ window.addEventListener("load", function(evt) {
           let name = e.target.textContent;
           
           setTo(name);
+          if (filtered) {
+            filterChat();
+          }
           usermenu.style.display = 'none';
         });
         ul.appendChild(li);
@@ -348,22 +392,6 @@ window.addEventListener("load", function(evt) {
 		});
   });
   
-  var unhide = function() {
-    var boxes = document.getElementsByClassName("inbox");
-    Array.from(boxes).forEach((b) => {
-      b.style.display = 'block';
-    });
-    return false;
-  }
-  
-  var hide = function() {
-    var boxes = document.getElementsByClassName("inbox");
-    Array.from(boxes).forEach((b) => {
-      b.style.display = 'none';
-    });
-    return false;
-  }
-  
   document.getElementById('filter').addEventListener('click', function(evt) {
     evt.preventDefault();
     if (filtered) {
@@ -388,7 +416,7 @@ window.addEventListener("load", function(evt) {
     */  
       
     } else {
-    
+ /*   
       hide();
       let uri = "https://" + window.location.host + "/filter?user="+user+"&other="+man;
       fetch(uri)
@@ -403,6 +431,8 @@ window.addEventListener("load", function(evt) {
           document.getElementById(el).style.display = 'block';
         });
       });
+      */
+      filterChat();
     }
     ctrl.style.display = 'none';
     filtered = true;
