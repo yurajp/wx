@@ -11,9 +11,6 @@
     });
   }
 
-
-
-
 function setTo(p) {
   var person = document.getElementById("person");
   person.textContent = p;
@@ -249,8 +246,37 @@ window.addEventListener("load", function(evt) {
       Array.from(boxes).forEach((b) => {
         b.style.display = 'block';
       });
+      var dates = document.getElementsByClassName("date");
+      Array.from(dates).forEach((d) => {
+        d.style.display = 'block';
+      });
+      
       return false;
     }
+
+    var filterDate = function() {
+      let dates = document.getElementsByClassName("date");
+      Array.from(dates).forEach((d) => {
+        let cur = d.nextElementSibling;
+        d.style.display = 'none';
+        while(cur) {
+          var ch = cur.firstElementChild;
+          if (!ch) {
+            break
+          }
+          if(ch.style.display === 'block' && ch.className === "inbox") {
+            d.style.display = 'block';
+            break
+          }
+          if (cur.className == "date") {
+            break
+          }
+          cur = cur.nextElementSibling;
+        }
+      });
+      return false;
+    }
+    
 
     var filterChat = function(man) {
       if (man == "All") {
@@ -270,9 +296,13 @@ window.addEventListener("load", function(evt) {
         list.forEach((el) => {
           document.getElementById(el).style.display = 'block';
         });
+      })
+      .then(() => {
+        filterDate();
       });
     }
     
+
     person.onclick = function(evt) {
       if (!users) {
         return false;
@@ -300,6 +330,7 @@ window.addEventListener("load", function(evt) {
           setTo(name);
           if (filtered) {
             filterChat(name);
+        //    filterDate();
           }
           usermenu.style.width = '0';
           menu = false;
