@@ -75,6 +75,7 @@ window.addEventListener("load", function(evt) {
     var users = ["+All"];
     var output = document.getElementById("output");
     var usermenu = document.getElementById("usermenu");
+    var mWidth = '180px';
     var person = document.getElementById("person");
     var fimg = document.getElementById("fimg");
     var input = document.getElementById("input");
@@ -83,6 +84,7 @@ window.addEventListener("load", function(evt) {
     var sound = new Audio('static/snd/message.mp3');
     var ws;
     let date = new Date("01 Jan");
+    let menu = false;
     const opts = {
 	    day: 'numeric', month: 'long'
     };
@@ -275,8 +277,9 @@ window.addEventListener("load", function(evt) {
       if (!users) {
         return false;
       }
-      if (usermenu.style.display == "block") {
-        usermenu.style.display = 'none';
+      if (menu) {
+        usermenu.style.width = '0';
+        menu = false;
         return false;
       }
       usermenu.innerHTML='';
@@ -298,12 +301,14 @@ window.addEventListener("load", function(evt) {
           if (filtered) {
             filterChat(name);
           }
-          usermenu.style.display = 'none';
+          usermenu.style.width = '0';
+          menu = false;
         });
         ul.appendChild(li);
       });
       usermenu.appendChild(ul);
-      usermenu.style.display="block";
+      usermenu.style.width=mWidth;
+      menu = true;
       
       return false;
     };
