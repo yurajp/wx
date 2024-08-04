@@ -158,16 +158,18 @@ window.addEventListener("load", function(evt) {
       var box = document.createElement("div");
       box.innerHTML = ms.content;
       
-      var inner = box.getElementsByClassName("inbox")[0];
-      var hd = inner.getElementsByClassName("header")[0];
+      var inbx = box.getElementsByClassName("inbox");
+      if (Array.from(inbx).length > 0) {
+        
+        var hd = inbx[0].getElementsByClassName("header")[0];
       
-      var tr = hd.getElementsByClassName("trash")[0];
-      var fr = hd.getElementsByClassName("id-from")[0].textContent;
-      var to = hd.getElementsByClassName("id-to")[0].textContent;
-      if (to != user && fr != user) {
-        tr.style.visibility = 'hidden';
-      }
-      
+        var tr = hd.getElementsByClassName("trash")[0];
+        var fr = hd.getElementsByClassName("id-from")[0].textContent;
+        var to = hd.getElementsByClassName("id-to")[0].textContent;
+        if (to != user && fr != user) {
+          tr.style.visibility = 'hidden';
+        }
+      } 
       output.appendChild(box);
       output.scroll(0, output.scrollHeight);
       

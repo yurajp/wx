@@ -3,6 +3,6 @@ config/conf.ini
 data/*
 server/files/*
 server/static/avatars/*
-
+wx.sh
 player-css.txt
 

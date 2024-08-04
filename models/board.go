@@ -184,6 +184,8 @@ func NewChatMap(b *Board) *ChatMap {
 func ServerMessage(text string) *Message {
   m := NewMessage()
   m.Type = "server"
+  m.From = User("server")
+  m.To = User("All")
   m.Data = text
   return m
 }

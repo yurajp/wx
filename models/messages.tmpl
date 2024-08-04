@@ -1,8 +1,11 @@
+
 {{ define "server" }}
   <div class="server">
-   <span class="cursiv">
-    {{ .Time.Time }}
-   </span>
+   <div class="header">
+     <span class="cursiv">
+      {{ .Time.Time }}
+     </span>
+   </div>
    <p class="srv">{{ .Data }}</p>
   </div>
 {{ end }}

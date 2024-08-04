@@ -149,11 +149,12 @@ body {
 #input_img {
   padding-left: 20px;
   cursor: pointer;
+  width: 8px;
 }
 label {
   display: block;
   padding-left: 8px;
-  font-size: 0.8rem;
+  font-size: 0.4rem;
 }
 
 #username {
@@ -229,8 +230,8 @@ h1 {
   border: 1px solid #8BB0AB;
   border-radius: 50%;
   position: relative;
-  right: 33vw;
-  bottom: 32px;
+  right: 30vw;
+  bottom: 34px;
   margin-bottom: -24px;
   cursor: pointer;
 }
@@ -243,8 +244,8 @@ h1 {
 #paste {
   display: block;
   position: relative;
-  left: 35vw;
-  bottom: 20px;
+  left: 30vw;
+  bottom: 24px;
   margin-bottom: -24px;
 }
 
@@ -281,7 +282,7 @@ h1 {
 #input {
   min-height: 3vh;
   width: 100%;
-  margin: 0 20px;
+  margin: 0 16px;
   padding: 3px 16px;
   border: 1px solid gray;
   border-radius: 16px;
@@ -351,7 +352,7 @@ h1 {
 
 #ctr-input {
   display: flex;
-  width: 64%;
+  width: 62%;
   justify-content: space-between;
   align-items: center;
 }
@@ -410,7 +411,7 @@ h1 {
   word-wrap: break-word;
   margin: 0 4%;
   padding: 3px 4%;
-  background: #7BBAA0;
+  background: #AABFAF;
   border-radius: 12px;
   box-shadow: 1px 2px 3px #3D3D27;
 }

@@ -250,8 +250,8 @@ func editAvatar(w http.ResponseWriter, r *http.Request) {
 func deleteHandler(w http.ResponseWriter, r *http.Request) {
   sid := r.URL.Query().Get("sid")
   us := r.URL.Query().Get("user")
-  isFrom, isFile, isVoice, fname := database.S.IsFromOrToAndFile(sid, us) 
-  if isFrom {
+  isFromOrTo, isFile, isVoice, fname := database.S.IsFromOrToAndFile(sid, us) 
+  if isFromOrTo {
     err := database.S.Delete(sid)
     if err != nil {
       log.Printf("db message delete error: %v", err)
