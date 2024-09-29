@@ -11,7 +11,7 @@ import (
 func main() {
   err := config.LoadConf()
   if err != nil {
-    log.Printf("Config error: %v", err)
+    log.Printf("Config load error: %v", err)
     fmt.Println("Enter any to quit")
     var q string
     fmt.Scanf("%s", &q)

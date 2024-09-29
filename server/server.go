@@ -71,7 +71,7 @@ func Start() {
   port = config.Conf.Port
   addr = GetLocalIP() + port
   if !strings.HasPrefix(addr, "192.") {
-    fmt.Println(" NO ROUTER! \n  Ctrl+C for quit!")
+    fmt.Println(" NO ROUTER CONNECTED!\n  Ctrl+C for quit!")
     return
   }
   certKeyPath := config.Conf.CertKeyPath

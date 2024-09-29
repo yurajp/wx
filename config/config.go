@@ -4,6 +4,7 @@ import (
   "fmt"
   "os"
   "errors"
+  "net"
   
   "github.com/yurajp/confy"
 )
@@ -33,7 +34,21 @@ func initConf() (bool, error) {
   return true, nil
 }
 
+func getLocalIP() string {
+    conn, err := net.Dial("udp", "8.8.8.8:80")
+    if err != nil {
+        fmt.Println(err)
+        return ""
+    }
+    defer conn.Close()
+    localAddr := conn.LocalAddr().(*net.UDPAddr)
+    return localAddr.IP.String()
+}
+
+
+
 func LoadConf() error {
+  var err error
   warn := "You should edit the configuration file 'config/conf.ini' to define path to your certificates"
   undefinedErr := errors.New("path to certificate is not defined yet")
   ok, err := initConf()
@@ -57,7 +72,40 @@ func LoadConf() error {
     fmt.Println(warn)
     return undefinedErr
   }
+  locIp := getLocalIP()
+  if locIp == "" {
+    return errors.New("cannot get local IP address")
+  }
+  cfg.CertPath = makeCertPath(cfg.CertPath, locIp)
+  cfg.CertKeyPath = makeCertKeyPath(cfg.CertKeyPath, locIp)
+  
+  err = checkCerts(cfg.CertPath, cfg.CertKeyPath)
+  if err != nil {
+    return err
+  }
   Conf = &cfg
   
+  return nil
+}
+
+func makeCertPath(certPath, addr string) string {
+  return certPath + addr + ".pem"
+}
+
+func makeCertKeyPath(certPath, addr string) string {
+  return certPath + addr + "-key.pem"
+}
+
+func checkCerts(crt, crtkey string) error {
+  if _, err := os.Stat(crt); err != nil {
+    if os.IsNotExist(err) {
+      return errors.New("certificate not found for this IP")
+    }
+  }
+  if _, err := os.Stat(crtkey); err != nil {
+    if os.IsNotExist(err) {
+      return errors.New("certificate key not found for this IP")
+    }
+  }
   return nil
 }
