@@ -1,7 +1,6 @@
 package server
 
 import (
-  "net"
   "net/http"
   "crypto/tls"
   "html/template"
@@ -56,24 +55,21 @@ func host(r *http.Request) string {
   return strings.Split(r.RemoteAddr, ":")[0]
 }
 
-func GetLocalIP() string {
-    conn, err := net.Dial("udp", "8.8.8.8:80")
-    if err != nil {
-        fmt.Println(err)
-        return ""
-    }
-    defer conn.Close()
-    localAddr := conn.LocalAddr().(*net.UDPAddr)
-    return localAddr.IP.String()
-}
 
 func Start() {
   port = config.Conf.Port
-  addr = GetLocalIP() + port
+  addr = config.GetLocalIP() + port
   if !strings.HasPrefix(addr, "192.") {
-    fmt.Println(" NO ROUTER CONNECTED!\n  Ctrl+C for quit!")
-    return
+    fmt.Println("  NO ROUTER CONNECTED!\n  enter 'y' to work in local mode\n  or any to quit")
+    var q string
+    fmt.Scanf("%s", &q)
+    if q != "y" {
+      fmt.Println("\t BYE!")
+      time.Sleep(time.Second)
+      Quit <-struct{}{}
+    }
   }
+  
   certKeyPath := config.Conf.CertKeyPath
   certPath := config.Conf.CertPath
   

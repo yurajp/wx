@@ -5,6 +5,7 @@ import (
   "os"
   "errors"
   "net"
+  "strings"
   
   "github.com/yurajp/confy"
 )
@@ -34,7 +35,7 @@ func initConf() (bool, error) {
   return true, nil
 }
 
-func getLocalIP() string {
+func GetLocalIP() string {
     conn, err := net.Dial("udp", "8.8.8.8:80")
     if err != nil {
         fmt.Println(err)
@@ -42,7 +43,13 @@ func getLocalIP() string {
     }
     defer conn.Close()
     localAddr := conn.LocalAddr().(*net.UDPAddr)
-    return localAddr.IP.String()
+    
+    
+    locIp := localAddr.IP.String()
+    if !strings.HasPrefix(locIp, "192.") {
+      return "127.0.0.1"
+    }
+    return locIp
 }
 
 
@@ -72,7 +79,7 @@ func LoadConf() error {
     fmt.Println(warn)
     return undefinedErr
   }
-  locIp := getLocalIP()
+  locIp := GetLocalIP()
   if locIp == "" {
     return errors.New("cannot get local IP address")
   }
@@ -89,11 +96,11 @@ func LoadConf() error {
 }
 
 func makeCertPath(certPath, addr string) string {
-  return certPath + addr + ".pem"
+  return strings.TrimSuffix(certPath, "/") + "/" + addr + ".pem"
 }
 
 func makeCertKeyPath(certPath, addr string) string {
-  return certPath + addr + "-key.pem"
+  return strings.TrimSuffix(certPath, "/") + "/" + addr + "-key.pem"
 }
 
 func checkCerts(crt, crtkey string) error {
